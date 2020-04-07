@@ -44,7 +44,6 @@ public class HtmlParser<E> {
 			for(Element areaTagElement : areaTagElements) {
 				diagramNode = new DiagramNode<E>();
 				diagramEdge = new DiagramEdge<E>();
-				//isNode = true;
 				extractDataFrmAttr(areaTagElement.attributes());
 				if(isNode) {
 					diagramNodesList.add(diagramNode);
@@ -52,9 +51,6 @@ public class HtmlParser<E> {
 				else {
 					diagramEdgesList.add(diagramEdge);
 				}
-				//System.out.println("************");
-//				System.out.println("NODE "+diagramNode);
-//				System.out.println("EDGE "+diagramEdge);
 				beforeCounter++;
 			}
 			
@@ -70,8 +66,6 @@ public class HtmlParser<E> {
 
 	private void extractDataFrmAttr(Attributes attributes) {
 	
-		
-		
 		for(Attribute attribute: attributes.asList()) {
 
 			if(attribute.getKey().equalsIgnoreCase("alt") && 
@@ -104,7 +98,7 @@ public class HtmlParser<E> {
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
 					attribute.getValue().toLowerCase().contains("INITIAL STEP".toLowerCase()) ||
 					attribute.getValue().toLowerCase().contains("STEPS".toLowerCase())) {
-				//System.out.println("INITIAL STEP-->" + attribute.getValue());
+				
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("INITIAL STEP".toLowerCase())) {
 					diagramNode.setLabel(Label.INITIAL_STEP);
@@ -117,13 +111,13 @@ public class HtmlParser<E> {
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
 					attribute.getValue().toLowerCase().contains("TASK".toLowerCase())) {
-				//System.out.println("TASKS-->" + attribute.getValue());
+				
 				isNode = true;
 				diagramNode.setLabel(Label.TASK);
 				diagramNode.setName((E)attribute.getValue());
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
-				//System.out.println("SUB TASKS-->" + attribute.getValue());
+				
 				isNode = true;
 				diagramNode.setLabel(Label.SUB_TASK);
 				diagramNode.setName((E)attribute.getValue());
@@ -133,25 +127,16 @@ public class HtmlParser<E> {
 				if(isNode == true) {
 					String nodeID = attribute.getValue().substring(1);
 					diagramNode.setId((E) nodeID);
-					//System.out.println("Node-->" + diagramNode);
+					
 				}
 				else {
 					String edgeID = attribute.getValue().substring(1);
 					diagramEdge.setId((E) edgeID);
-					//System.out.println("Edge-->" + diagramEdge);
 				}
 			}
 		}
-		//isNode = true;
+		
 		afterCounter++;
-		
-		//System.out.println(it.getAttributes());
-		
-//				if(areaTagElement.hasAttr("href") && areaTagElement.hasAttr("alt")) {
-//					System.out.println(areaTagElement.attr("href") +"--"+ areaTagElement.attr("alt"));
-//					afterCounter++;
-//				}
-		//extractData(areaTagElement);
 	}
 	
 	
