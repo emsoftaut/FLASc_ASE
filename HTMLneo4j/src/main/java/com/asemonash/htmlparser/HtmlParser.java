@@ -19,8 +19,9 @@ public class HtmlParser<E> {
 	private DiagramNode<E> diagramNode;
 	private DiagramEdge<E> diagramEdge;
 	private boolean isNode;
-	private List<DiagramNode<E>> diagramNodesList;
-	private List<DiagramEdge<E>> diagramEdgesList;
+//	private List<DiagramNode<E>> diagramNodesList;
+//	private List<DiagramEdge<E>> diagramEdgesList;
+	private List<E> graphElementsList;
 	/**
 	 * afterCounter and beforeCounter are debug
 	 * statements. Remove in the final version
@@ -29,8 +30,9 @@ public class HtmlParser<E> {
 	
 	public HtmlParser(File file) {
 		this.htmlFile = file;
-		diagramNodesList = new LinkedList<DiagramNode<E>>();
-		diagramEdgesList = new LinkedList<DiagramEdge<E>>();
+//		diagramNodesList = new LinkedList<DiagramNode<E>>();
+//		diagramEdgesList = new LinkedList<DiagramEdge<E>>();
+		graphElementsList = new LinkedList<E>();
 	}
 	
 	public void initHtmlParser() {
@@ -46,18 +48,21 @@ public class HtmlParser<E> {
 				diagramEdge = new DiagramEdge<E>();
 				extractDataFrmAttr(areaTagElement.attributes());
 				if(isNode) {
-					diagramNodesList.add(diagramNode);
+					//diagramNodesList.add(diagramNode);
+					graphElementsList.add((E) diagramNode);
 				}
 				else {
-					diagramEdgesList.add(diagramEdge);
+					//diagramEdgesList.add(diagramEdge);
+					graphElementsList.add((E)diagramEdge);
 				}
 				beforeCounter++;
 			}
 			
+			createRelationships(document, graphElementsList);
 			//rowCounterDebugFunc();
-			displayNodeList();
-			System.out.println("******************");
-			displayEdgeList();
+			//displayNodeList();
+			//System.out.println("******************");
+			//displayEdgeList();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,6 +98,18 @@ public class HtmlParser<E> {
 					diagramNode.setLabel(Label.CONDITION);
 					diagramNode.setName((E) attribute.getValue());
 				}
+			}
+			
+			else if(attribute.getKey().equalsIgnoreCase("alt") && 
+					(attribute.getValue().toLowerCase().contains("PROBLEM DEFINITION".toLowerCase()))) {
+				isNode = true;
+				diagramNode.setLabel(Label.ROOT);
+				String value = attribute.getValue();
+				String subValue = value.substring(0, value.indexOf(":"));
+				
+				String subLabel = value.substring(value.indexOf(":"), value.length());
+				diagramNode.setName((E)subValue);
+				diagramNode.setSubLabel((E)subLabel);
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
@@ -146,24 +163,18 @@ public class HtmlParser<E> {
 				isNode = true;
 				diagramNode.setLabel(Label.TASK);
 				String value = attribute.getValue();
-				System.out.println("BUG at-->"+ value);
-				//String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
-				
-				String subLabel = value.substring(value.indexOf(":"), value.length());
-				diagramNode.setName((E)value);
+				diagramNode.setName((E)subValue);
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
 				isNode = true;
 				diagramNode.setLabel(Label.SUB_TASK);
 				String value = attribute.getValue();
-				System.out.println("BUG at-->"+ value);
-				//String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
-				
 				String subLabel = value.substring(value.indexOf(":"), value.length());
-				diagramNode.setName((E) value);
+				diagramNode.setName((E)subValue);
+				diagramNode.setSubLabel((E)subLabel);
 			}
 			
 			if(attribute.getKey().equalsIgnoreCase("href")) {
@@ -183,21 +194,28 @@ public class HtmlParser<E> {
 	}
 	
 	
+	private void createRelationships(Document htmlDoc, List<E> graphElementsList) {
+		for(E element: graphElementsList) {
+			System.out.println("The element is-->" + element);
+		}
+		
+	}
+	
 	private void rowCounterDebugFunc() {
 		System.out.println("Rows before filtering-->" + beforeCounter);
 		System.out.println("******************");
 		System.out.println("Rows after filtering-->"+ afterCounter);
 	}
 	
-	public void displayNodeList() {
-		for(DiagramNode<E> nodes: diagramNodesList) {
-			System.out.println(nodes);
-		}
-	}
- 	
-	public void displayEdgeList() {
-		for(DiagramEdge<E> edges: diagramEdgesList) {
-			System.out.println(edges);
-		}
-	}
+//	public void displayNodeList() {
+//		for(DiagramNode<E> nodes: diagramNodesList) {
+//			System.out.println(nodes);
+//		}
+//	}
+// 	
+//	public void displayEdgeList() {
+//		for(DiagramEdge<E> edges: diagramEdgesList) {
+//			System.out.println(edges);
+//		}
+//	}
 }
