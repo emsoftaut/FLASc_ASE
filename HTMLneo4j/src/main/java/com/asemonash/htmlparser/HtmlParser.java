@@ -9,6 +9,7 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 
@@ -103,13 +104,13 @@ public class HtmlParser<E> {
 			else if(attribute.getKey().equalsIgnoreCase("alt") && 
 					(attribute.getValue().toLowerCase().contains("PROBLEM DEFINITION".toLowerCase()))) {
 				isNode = true;
-				diagramNode.setLabel(Label.ROOT);
+				diagramNode.setLabel(Label.DAP);
 				String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
 				
-				String subLabel = value.substring(value.indexOf(":"), value.length());
+				//String subLabel = value.substring(value.indexOf(":"), value.length());
 				diagramNode.setName((E)subValue);
-				diagramNode.setSubLabel((E)subLabel);
+				//diagramNode.setSubLabel((E)subLabel);
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
@@ -195,8 +196,32 @@ public class HtmlParser<E> {
 	
 	
 	private void createRelationships(Document htmlDoc, List<E> graphElementsList) {
+		
+		Elements divElement = htmlDoc.getElementsByTag("div");
+		//System.out.println(divElement);
+		
+		Elements dElements = htmlDoc.select("div#3_20101");
+		
+		List<Node> eList = null;
+		for(Element element : dElements) {
+			eList = element.childNodes();
+			//System.out.println(eList);
+		}
+		
+		
+		
+		
 		for(E element: graphElementsList) {
-			System.out.println("The element is-->" + element);
+			
+			//System.out.println(element.getClass().toString().contains("DiagramNode"));
+			//System.out.println("ELEMENT " + element);
+			if(element.getClass().toString().contains("DiagramNode")) {
+				
+					System.out.println("The sub Label is-->"+((DiagramNode<E>) element).getSubLabel() +
+							"The Label is-->"+ ((DiagramNode<E>) element).getLabel() + "THE NAME IS " + ((DiagramNode<E>) element).getName());
+				
+			}
+			//System.out.println("The element is-->" + ((DiagramNode<E>) element).getSubLabel());
 		}
 		
 	}
