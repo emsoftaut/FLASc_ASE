@@ -8,5 +8,9 @@ public enum Label {
 	INITIAL_STEP,
 	STEPS,
 	FROM,
-	TO
+	TO,
+	START,
+	END,
+	HIGH_LEVEL,
+	LOW_LEVEL
 }

@@ -109,18 +109,61 @@ public class HtmlParser<E> {
 					diagramNode.setName((E) attribute.getValue());
 				}
 			}
+			
+			else if(attribute.getKey().equalsIgnoreCase("alt") &&
+					attribute.getValue().toLowerCase().contains("START".toLowerCase()) ||
+					attribute.getValue().toLowerCase().contains("END".toLowerCase())) {
+				
+				isNode = true;
+				if(attribute.getValue().toLowerCase().contains("START".toLowerCase())) {
+					diagramNode.setLabel(Label.START);
+					diagramNode.setName((E) attribute.getValue());
+				}
+				else {
+					diagramNode.setLabel(Label.END);
+					diagramNode.setName((E) attribute.getValue());
+				}
+			}
+			
+			else if(attribute.getKey().equalsIgnoreCase("alt") &&
+					attribute.getValue().toLowerCase().contains("HIGH LEVEL".toLowerCase()) ||
+					attribute.getValue().toLowerCase().contains("LOW LEVEL".toLowerCase())) {
+				
+				isNode = true;
+				if(attribute.getValue().toLowerCase().contains("HIGH LEVEL".toLowerCase())) {
+					diagramNode.setLabel(Label.HIGH_LEVEL);
+					diagramNode.setName((E) attribute.getValue());
+				}
+				else {
+					diagramNode.setLabel(Label.LOW_LEVEL);
+					diagramNode.setName((E) attribute.getValue());
+				}
+			}
+			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
 					attribute.getValue().toLowerCase().contains("TASK".toLowerCase())) {
 				
 				isNode = true;
 				diagramNode.setLabel(Label.TASK);
-				diagramNode.setName((E)attribute.getValue());
+				String value = attribute.getValue();
+				System.out.println("BUG at-->"+ value);
+				//String value = attribute.getValue();
+				String subValue = value.substring(0, value.indexOf(":"));
+				
+				String subLabel = value.substring(value.indexOf(":"), value.length());
+				diagramNode.setName((E)value);
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
 				isNode = true;
 				diagramNode.setLabel(Label.SUB_TASK);
-				diagramNode.setName((E)attribute.getValue());
+				String value = attribute.getValue();
+				System.out.println("BUG at-->"+ value);
+				//String value = attribute.getValue();
+				String subValue = value.substring(0, value.indexOf(":"));
+				
+				String subLabel = value.substring(value.indexOf(":"), value.length());
+				diagramNode.setName((E) value);
 			}
 			
 			if(attribute.getKey().equalsIgnoreCase("href")) {
