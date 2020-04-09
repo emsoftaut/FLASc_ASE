@@ -2,8 +2,11 @@ package com.asemonash.htmlparser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Attributes;
@@ -196,7 +199,8 @@ public class HtmlParser<E> {
 	
 	
 	private void createRelationships(Document htmlDoc, List<E> graphElementsList) {
-		
+		Map<String, Elements> map = new HashMap();
+		List<String> mapKeys = new LinkedList<String>();
 		Elements divElement = htmlDoc.getElementsByTag("div");
 		//System.out.println(divElement);
 		
@@ -238,8 +242,11 @@ public class HtmlParser<E> {
 				String rTable = divID + "_RelationshipsTable";
 				Elements innerrelTable = htmlDoc.select(rTable);
 				String name = (String) ((DiagramNode<E>) element).getName();
+				mapKeys.add(id);
 				for(Element e : innerrelTable) {
-					System.out.println(name+" --> "+e.getElementsByTag("tr"));
+					//System.out.println(name+" --> "+e.getElementsByTag("tr"));
+					Elements innerEle = e.getElementsByTag("tr");
+					map.put(id, innerEle);
 				}
 				//System.out.println(id+"\n"+ innerrelTable);
 				
@@ -249,9 +256,21 @@ public class HtmlParser<E> {
 				
 				//System.out.println(innerHtmlTable);
 				
-				System.out.println("**********************");
+				//System.out.println("**********************");
 			}
 		}
+		for(String key: mapKeys) {
+			Elements vElements = map.get(key);
+			System.out.println("Key-->" + key);
+			if(vElements != null) {
+				for(Element ev : vElements) {
+					System.out.println("Element is-->"+ ev.getElementsByTag("a") +"__"+ ev.getElementsByTag("td"));
+					System.out.println("************");
+				}
+			}
+			System.out.println("_______________________");
+		}
+		
 		
 	}
 	
