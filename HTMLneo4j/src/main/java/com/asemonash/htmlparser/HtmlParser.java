@@ -217,11 +217,40 @@ public class HtmlParser<E> {
 			//System.out.println("ELEMENT " + element);
 			if(element.getClass().toString().contains("DiagramNode")) {
 				
-					System.out.println("The sub Label is-->"+((DiagramNode<E>) element).getSubLabel() +
-							"The Label is-->"+ ((DiagramNode<E>) element).getLabel() + "THE NAME IS " + ((DiagramNode<E>) element).getName());
+//				System.out.println("The sub Label is-->"+((DiagramNode<E>) element).getSubLabel() +
+//						" The Label is-->"+ ((DiagramNode<E>) element).getLabel() + 
+//						" THE NAME IS " + ((DiagramNode<E>) element).getName());
 				
 			}
 			//System.out.println("The element is-->" + ((DiagramNode<E>) element).getSubLabel());
+		}
+		
+		
+		
+		for (E element : graphElementsList) {
+			if(element.getClass().toString().toLowerCase().contains("DIAGRAMNODE".toLowerCase()) 
+					&& ((DiagramNode<E>) element).getId() != null ) { 
+				//THE NOT NULL CHECK IS TEMPORARY REMOVE AFTER RESOLVING
+				//System.out.println("div#"+ ((DiagramNode<E>) element).getId());
+				String id = (String) ((DiagramNode<E>) element).getId();
+				String divID = "div#"+ id;
+				//Elements eTest = htmlDoc.select(divID);
+				String rTable = divID + "_RelationshipsTable";
+				Elements innerrelTable = htmlDoc.select(rTable);
+				String name = (String) ((DiagramNode<E>) element).getName();
+				for(Element e : innerrelTable) {
+					System.out.println(name+" --> "+e.getElementsByTag("tr"));
+				}
+				//System.out.println(id+"\n"+ innerrelTable);
+				
+				
+				
+				//Document innerHtmlTable = Jsoup.parse(innerrelTable);
+				
+				//System.out.println(innerHtmlTable);
+				
+				System.out.println("**********************");
+			}
 		}
 		
 	}
