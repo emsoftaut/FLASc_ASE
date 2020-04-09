@@ -262,10 +262,18 @@ public class HtmlParser<E> {
 		for(String key: mapKeys) {
 			Elements vElements = map.get(key);
 			System.out.println("Key-->" + key);
+			int i = 0;
 			if(vElements != null) {
+				
 				for(Element ev : vElements) {
-					System.out.println("Element is-->"+ ev.getElementsByTag("a") +"__"+ ev.getElementsByTag("td"));
-					System.out.println("************");
+					
+					System.out.println("Element is-->"+ ev.childNode(1));
+					if(ev.getElementsByTag("td").toString().length()>0) {
+						System.out.println("Element is-->"+ ev.select("td").select("a").attr("href").substring(1));
+					//Elements node = ev.select("td");
+					}	
+					i++;
+					System.out.println("************" + i);
 				}
 			}
 			System.out.println("_______________________");
