@@ -14,6 +14,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Evaluator;
 
 
 public class HtmlParser<E> {
@@ -238,7 +239,7 @@ public class HtmlParser<E> {
 				//System.out.println("div#"+ ((DiagramNode<E>) element).getId());
 				String id = (String) ((DiagramNode<E>) element).getId();
 				String divID = "div#"+ id;
-				//Elements eTest = htmlDoc.select(divID);
+				//Elements eTest = htmlDoc.select(divID);s
 				String rTable = divID + "_RelationshipsTable";
 				Elements innerrelTable = htmlDoc.select(rTable);
 				String name = (String) ((DiagramNode<E>) element).getName();
@@ -261,25 +262,65 @@ public class HtmlParser<E> {
 		}
 		for(String key: mapKeys) {
 			Elements vElements = map.get(key);
-			System.out.println("Key-->" + key);
-			int i = 0;
+			//System.out.println("Key-->" + key);
+			
 			if(vElements != null) {
-				
+				//int i = 0;
 				for(Element ev : vElements) {
 					
-					System.out.println("Element is-->"+ ev.childNode(1));
-					if(ev.getElementsByTag("td").toString().length()>0) {
-						System.out.println("Element is-->"+ ev.select("td").select("a").attr("href").substring(1));
-					//Elements node = ev.select("td");
-					}	
-					i++;
-					System.out.println("************" + i);
+					//if(i < ev.childNodeSize()) {
+						//System.out.println("entire string "+ ev);
+					
+					//System.out.println("Child Node th "+ev.childNodes());
+					calculateRelationships(key, ev.childNodes());
+					
+					//	System.out.println("Child Node td "+ev.childNodes());
+					
+						
+					//}
+					//i++;
+					//System.out.println();
+//					if(ev.getElementsByTag("td").toString().length()>0 &&
+//							i < ev.childNodeSize()) {
+//						System.out.println("iteration-->" + i);
+//						System.out.println("Element is-->"+ ev.childNode(i));
+//						//System.out.println("Element is-->"+ ev.select("td").select("a").attr("href").substring(1));
+//					//Elements node = ev.select("td");
+//						i++;
+//					}	
+					
+					//System.out.println("************" + i);
+					
 				}
 			}
 			System.out.println("_______________________");
 		}
 		
 		
+	}
+	
+	public void calculateRelationships(String key, List<Node> nodeList) {
+		System.out.println("The key is-->" + key);
+		//System.out.println("The list is-->" + nodeList);
+		
+		for(Node node : nodeList) {
+			//System.out.println((Element)node);
+			Element element = (Element)node;
+			if(element.getElementsByTag("th").toString().contains("th")) {
+				System.out.println("header "+element.getElementsByTag("th").text());
+			}
+			else if(element.getElementsByTag("td").toString().contains("td")){
+				//System.out.println("td "+ element.getElementsByTag("td").text());
+				if(element.select("td").toString().contains("href")) {
+					System.out.println("The id is-->"+element.select("td").select("a").attr("href").substring(1));
+				}
+				else {
+					System.out.println("td "+ element.getElementsByTag("td").text());
+				}
+			}
+			
+		}
+		System.out.println("*************************");
 	}
 	
 	private void rowCounterDebugFunc() {
