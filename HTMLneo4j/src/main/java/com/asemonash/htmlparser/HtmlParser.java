@@ -15,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
+import org.w3c.dom.css.ElementCSSInlineStyle;
 
 
 public class HtmlParser<E> {
@@ -301,28 +302,58 @@ public class HtmlParser<E> {
 	
 	public void calculateRelationships(String key, List<Node> nodeList) {
 		System.out.println("The key is-->" + key);
-		//System.out.println("The list is-->" + nodeList);
 		
+		//System.out.println("The list is-->" + nodeList);
+		Relationships relationships = new Relationships();
+		relationships.setStartNode(key);
+		String startNodeData = (String) getDiagramNode(key).getName();
+		System.out.println("The corresponing diagram node name is-->"+ startNodeData);
+		
+		relationships.setEndNodeData(startNodeData);
+		int i = 0;
 		for(Node node : nodeList) {
 			//System.out.println((Element)node);
 			Element element = (Element)node;
-			if(element.getElementsByTag("th").toString().contains("th")) {
-				System.out.println("header "+element.getElementsByTag("th").text());
-			}
-			else if(element.getElementsByTag("td").toString().contains("td")){
+			if(element.getElementsByTag("td").toString().contains("td")){
 				//System.out.println("td "+ element.getElementsByTag("td").text());
-				if(element.select("td").toString().contains("href")) {
+				if(element.select("td").toString().contains("href") && i == 2) {
+					//System.out.println("Iteration-->" + i);
 					System.out.println("The id is-->"+element.select("td").select("a").attr("href").substring(1));
+					relationships.setEndNode(element.select("td").select("a").attr("href").substring(1));
+					System.out.println("The data is -->" + element.getElementsByTag("td").text());
+					relationships.setEndNodeData(element.getElementsByTag("td").text());
 				}
 				else {
-					System.out.println("td "+ element.getElementsByTag("td").text());
+					System.out.println("Iteration-->" + i);
+					if(i == 0) {
+						System.out.println("goes in role header1 "+"td "+ element.getElementsByTag("td").text());
+						relationships.setInRoleHeader1(element.getElementsByTag("td").text());
+					}
+					
+					else if (i == 3) {
+						System.out.println("goes in role header2 "+ element.getElementsByTag("td").text());
+						relationships.setInRoleHeader2(element.getElementsByTag("td").text());
+					}
+					
 				}
 			}
-			
+			i++;
 		}
+		System.out.println(relationships);
 		System.out.println("*************************");
 	}
 	
+	
+	private DiagramNode<E> getDiagramNode(String nodeID){
+		DiagramNode<E> diagramNode = null;
+		for(E d : graphElementsList) {
+			if(d.getClass().toString().toLowerCase().contains("DIAGRAMNODE".toLowerCase()) && 
+					((DiagramNode<E>) d).getId() == nodeID) {
+				diagramNode = (DiagramNode<E>) d;
+			}
+		}
+		return diagramNode;	
+	}
 	private void rowCounterDebugFunc() {
 		System.out.println("Rows before filtering-->" + beforeCounter);
 		System.out.println("******************");
