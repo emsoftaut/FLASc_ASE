@@ -7,6 +7,7 @@ public class Relationships {
 	private String endNodeData;
 	private String inRoleHeader2;
 	private String endNode;
+	
 	public String getStartNode() {
 		return startNode;
 	}

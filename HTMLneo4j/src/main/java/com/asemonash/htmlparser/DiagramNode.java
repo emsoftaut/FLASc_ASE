@@ -1,16 +1,16 @@
 package com.asemonash.htmlparser;
 
 public class DiagramNode<E> {
-	private E id;
+	private String id;
 	private E name;
 	private Label label;
 	private E subLabel;
 	
 	
-	public E getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(E id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public E getName() {

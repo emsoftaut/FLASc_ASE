@@ -25,8 +25,9 @@ public class HtmlParser<E> {
 	private DiagramNode<E> diagramNode;
 	private DiagramEdge<E> diagramEdge;
 	private boolean isNode;
-//	private List<DiagramNode<E>> diagramNodesList;
-//	private List<DiagramEdge<E>> diagramEdgesList;
+	private List<DiagramNode<E>> diagramNodesList;
+	private List<DiagramEdge<E>> diagramEdgesList;
+	private List<Relationships> relationshipsList;
 	private List<E> graphElementsList;
 	/**
 	 * afterCounter and beforeCounter are debug
@@ -36,9 +37,10 @@ public class HtmlParser<E> {
 	
 	public HtmlParser(File file) {
 		this.htmlFile = file;
-//		diagramNodesList = new LinkedList<DiagramNode<E>>();
+		diagramNodesList = new LinkedList<DiagramNode<E>>();
 //		diagramEdgesList = new LinkedList<DiagramEdge<E>>();
 		graphElementsList = new LinkedList<E>();
+		relationshipsList = new LinkedList<Relationships>();
 	}
 	
 	public void initHtmlParser() {
@@ -54,8 +56,13 @@ public class HtmlParser<E> {
 				diagramEdge = new DiagramEdge<E>();
 				extractDataFrmAttr(areaTagElement.attributes());
 				if(isNode) {
-					//diagramNodesList.add(diagramNode);
-					graphElementsList.add((E) diagramNode);
+					if(diagramNode.getId() == null) {
+						continue;
+					}
+					else {
+						diagramNodesList.add(diagramNode);
+						//graphElementsList.add((E) diagramNode);
+					}
 				}
 				else {
 					//diagramEdgesList.add(diagramEdge);
@@ -64,7 +71,9 @@ public class HtmlParser<E> {
 				beforeCounter++;
 			}
 			
-			createRelationships(document, graphElementsList);
+			createRelationships(document, diagramNodesList);
+			displayRelatiosnhips();
+			
 			//rowCounterDebugFunc();
 			//displayNodeList();
 			//System.out.println("******************");
@@ -186,7 +195,7 @@ public class HtmlParser<E> {
 			if(attribute.getKey().equalsIgnoreCase("href")) {
 				if(isNode == true) {
 					String nodeID = attribute.getValue().substring(1);
-					diagramNode.setId((E) nodeID);
+					diagramNode.setId(nodeID);
 					
 				}
 				else {
@@ -200,7 +209,7 @@ public class HtmlParser<E> {
 	}
 	
 	
-	private void createRelationships(Document htmlDoc, List<E> graphElementsList) {
+	private void createRelationships(Document htmlDoc, List<DiagramNode<E>> graphElementsList) {
 		Map<String, Elements> map = new HashMap();
 		List<String> mapKeys = new LinkedList<String>();
 		Elements divElement = htmlDoc.getElementsByTag("div");
@@ -217,7 +226,7 @@ public class HtmlParser<E> {
 		
 		
 		
-		for(E element: graphElementsList) {
+		for(DiagramNode<E> element: graphElementsList) {
 			
 			//System.out.println(element.getClass().toString().contains("DiagramNode"));
 			//System.out.println("ELEMENT " + element);
@@ -233,7 +242,7 @@ public class HtmlParser<E> {
 		
 		
 		
-		for (E element : graphElementsList) {
+		for (DiagramNode<E> element : diagramNodesList) {
 			if(element.getClass().toString().toLowerCase().contains("DIAGRAMNODE".toLowerCase()) 
 					&& ((DiagramNode<E>) element).getId() != null ) { 
 				//THE NOT NULL CHECK IS TEMPORARY REMOVE AFTER RESOLVING
@@ -294,22 +303,25 @@ public class HtmlParser<E> {
 					
 				}
 			}
-			System.out.println("_______________________");
+			//System.out.println("_______________________");
 		}
 		
 		
 	}
 	
 	public void calculateRelationships(String key, List<Node> nodeList) {
-		System.out.println("The key is-->" + key);
+		//System.out.println("The key is-->" + key);
 		
 		//System.out.println("The list is-->" + nodeList);
 		Relationships relationships = new Relationships();
 		relationships.setStartNode(key);
+		//System.out.println("The key is-->" + key);
 		String startNodeData = (String) getDiagramNode(key).getName();
-		System.out.println("The corresponing diagram node name is-->"+ startNodeData);
+		//System.out.println("The corresponing diagram node name is-->"+ startNodeData);
 		
-		relationships.setEndNodeData(startNodeData);
+		relationships.setStartNodeData(startNodeData);
+		//System.out.println("end node data " + relationships.getEndNodeData());
+		
 		int i = 0;
 		for(Node node : nodeList) {
 			//System.out.println((Element)node);
@@ -318,20 +330,29 @@ public class HtmlParser<E> {
 				//System.out.println("td "+ element.getElementsByTag("td").text());
 				if(element.select("td").toString().contains("href") && i == 2) {
 					//System.out.println("Iteration-->" + i);
-					System.out.println("The id is-->"+element.select("td").select("a").attr("href").substring(1));
-					relationships.setEndNode(element.select("td").select("a").attr("href").substring(1));
-					System.out.println("The data is -->" + element.getElementsByTag("td").text());
+					//System.out.println("The id is-->"+element.select("td").select("a").attr("href").substring(1));
+					String endNode = element.select("td").select("a").attr("href").substring(1);
+//					System.out.println("end node id is"+endNode +"startNOde " + key );
+//					
+//					System.out.println("END NODE LOGIC");
+//					System.out.println(getDiagramNode(endNode));
+//					
+//					System.out.println("START NODE LOGIC");
+//					System.out.println(getDiagramNode(key));
+					
+					relationships.setEndNode(endNode);
+					//System.out.println("The data is -->" + element.getElementsByTag("td").text());
 					relationships.setEndNodeData(element.getElementsByTag("td").text());
 				}
 				else {
-					System.out.println("Iteration-->" + i);
+					//System.out.println("Iteration-->" + i);
 					if(i == 0) {
-						System.out.println("goes in role header1 "+"td "+ element.getElementsByTag("td").text());
+						//System.out.println("goes in role header1 "+"td "+ element.getElementsByTag("td").text());
 						relationships.setInRoleHeader1(element.getElementsByTag("td").text());
 					}
 					
 					else if (i == 3) {
-						System.out.println("goes in role header2 "+ element.getElementsByTag("td").text());
+						//System.out.println("goes in role header2 "+ element.getElementsByTag("td").text());
 						relationships.setInRoleHeader2(element.getElementsByTag("td").text());
 					}
 					
@@ -339,25 +360,63 @@ public class HtmlParser<E> {
 			}
 			i++;
 		}
-		System.out.println(relationships);
-		System.out.println("*************************");
-	}
-	
-	
-	private DiagramNode<E> getDiagramNode(String nodeID){
-		DiagramNode<E> diagramNode = null;
-		for(E d : graphElementsList) {
-			if(d.getClass().toString().toLowerCase().contains("DIAGRAMNODE".toLowerCase()) && 
-					((DiagramNode<E>) d).getId() == nodeID) {
-				diagramNode = (DiagramNode<E>) d;
-			}
+		if(relationships.getEndNode()!= null && relationships.getEndNodeData() != null) {
+			relationshipsList.add(relationships);
 		}
-		return diagramNode;	
+		
+		//String testKey = "3_20262";
+		//System.out.println("TEST "+getDiagramNode(testKey));
+		//System.out.println(relationships);
+		//System.out.println("*************************");
 	}
+	
+	
+	//@SuppressWarnings("unchecked")
+
 	private void rowCounterDebugFunc() {
 		System.out.println("Rows before filtering-->" + beforeCounter);
 		System.out.println("******************");
 		System.out.println("Rows after filtering-->"+ afterCounter);
+	}
+	
+	
+	private void displayRelatiosnhips() {
+//		for(DiagramNode<E> d : diagramNodesList) {
+//			System.out.println(d);
+//		}
+		for(Relationships rel: relationshipsList) {
+			//System.out.println("Start Node "+ rel.getStartNode() + "Start Node Name " + getDiagramNode(rel.getStartNode()).getName());
+			//System.out.println("End Node "+ rel.getEndNode() + "End Node Name " + getDiagramNode(rel.getEndNode()).getName());
+			//System.out.println("-------------------------------------------");
+			
+			String startNodeID =  rel.getStartNode();
+			String endNodeID = rel.getEndNode();
+			
+			//System.out.println("start id " + startNodeID + "end id " + endNodeID);
+			
+			//System.out.println(">"+ rel.getStartNodeData() +"-->"+ rel.getEndNodeData());
+			System.out.println("Start Node " + getDiagramNode(startNodeID) + "End Node " + getDiagramNode(endNodeID));
+			//startNodeID = endNodeID;
+			//getDiagramNode(endNodeID);
+			//System.out.println( + "End Node id " + endNodeID);
+			
+			//System.out.println("end Node "+ endNodeID);
+			System.out.println("*************");
+		}
+	}
+	
+	private DiagramNode<E> getDiagramNode(String nodeID){
+		
+		//System.out.println("DEBUG 1"+ nodeID);
+		DiagramNode<E> diagramNode = null;
+		for(DiagramNode<E> d : diagramNodesList) {
+			//System.out.println(d);
+			if(d.getId().equals(nodeID)) {
+				diagramNode = d;
+			}
+		}
+		
+		return diagramNode;	
 	}
 	
 //	public void displayNodeList() {
