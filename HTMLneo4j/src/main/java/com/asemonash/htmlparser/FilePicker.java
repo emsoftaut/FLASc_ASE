@@ -35,7 +35,12 @@ public class FilePicker extends JPanel implements ActionListener {
 			int returnVal = fileChooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				new HtmlParser(file).initHtmlParser();
+				HtmlParser htmlParser = new HtmlParser(file);
+				htmlParser.initHtmlParser();
+				CypherQueryBuilder cypherQueryBuilder = new CypherQueryBuilder();
+				cypherQueryBuilder.setRelationshipsList(htmlParser.getRelationshipsList());
+				cypherQueryBuilder.setDiagramNodesList(htmlParser.getDiagramNodesList());
+				cypherQueryBuilder.initQueryBuilder();
 			}
 		}
 	}

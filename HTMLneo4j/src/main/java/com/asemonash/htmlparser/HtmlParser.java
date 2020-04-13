@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
 
@@ -29,6 +30,7 @@ public class HtmlParser<E> {
 	private List<DiagramNode<E>> diagramNodesList;
 	private List<DiagramEdge<E>> diagramEdgesList;
 	private List<Relationships> relationshipsList;
+	//private static <> List<DiagramNode<E>> listDiagramNodes;
 	//private List<E> graphElementsList;
 	/**
 	 * afterCounter and beforeCounter are debug
@@ -75,7 +77,7 @@ public class HtmlParser<E> {
 			}
 			
 			createRelationships(document, diagramNodesList);
-			displayRelatiosnhips();
+			//displayRelatiosnhips();
 			
 			
 		} catch (IOException e) {
@@ -235,7 +237,7 @@ public class HtmlParser<E> {
 		}
 	}
 	
-	public void calculateRelationships(String key, List<Node> nodeList) {
+	private void calculateRelationships(String key, List<Node> nodeList) {
 
 		Relationships relationships = new Relationships();
 		relationships.setStartNode(key);
@@ -279,13 +281,14 @@ public class HtmlParser<E> {
 	private void displayRelatiosnhips() {
 
 		for(Relationships rel: relationshipsList) {
-			System.out.println("Start Node " + getDiagramNode(rel.getStartNode()) 
-								+ "End Node " + getDiagramNode(rel.getEndNode()));
+			System.out.println("Start Node " + getDiagramNode(rel.getStartNode()).getId() + rel.getInRoleHeader1() + "\n" 
+								+ "End Node " + getDiagramNode(rel.getEndNode()).getId());
 			System.out.println("*************");
 		}
 	}
 	
 	private DiagramNode<E> getDiagramNode(String nodeID){
+		
 		
 		DiagramNode<E> diagramNode = null;
 		for(DiagramNode<E> d : diagramNodesList) {
@@ -295,4 +298,13 @@ public class HtmlParser<E> {
 		}
 		return diagramNode;	
 	}
+
+	public List<Relationships> getRelationshipsList() {
+		return relationshipsList;
+	}
+
+	public List<DiagramNode<E>> getDiagramNodesList() {
+		return diagramNodesList;
+	}
+	
 }
