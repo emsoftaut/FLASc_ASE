@@ -11,6 +11,11 @@ public class CypherQueryBuilder<E> {
 	private List<Relationships> relationshipsList;
 	private List<DiagramNode<E>> diagramNodesList;
 	private Set<String> startNodeSet;
+	private RelationshipLinkedSet relationshipLinkedSet; 
+	
+	public CypherQueryBuilder(){
+		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
+	}
 	
 	public List<Relationships> getRelationshipsList() {
 		return relationshipsList;
