@@ -8,6 +8,16 @@ public class Relationships {
 	private String inRoleHeader2;
 	private String endNode;
 	
+	
+	
+	public Relationships() {
+		super();
+	}
+	public Relationships(String startNode, String endNode) {
+		super();
+		this.startNode = startNode;
+		this.endNode = endNode;
+	}
 	public String getStartNode() {
 		return startNode;
 	}

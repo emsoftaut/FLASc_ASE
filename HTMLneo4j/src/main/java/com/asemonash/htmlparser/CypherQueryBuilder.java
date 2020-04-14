@@ -60,17 +60,29 @@ public class CypherQueryBuilder<E> {
 				if(startN.equals(relationships.getStartNode())) {
 					if(relationships.getInRoleHeader1().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader2().toLowerCase().contains("STEPS".toLowerCase())) {
-					System.out.println(getDiagramNode(startN).getName() +"-->"+ getDiagramNode(relationships.getEndNode()).getName());
+					//System.out.println(getDiagramNode(startN).getName() +"-->"+ getDiagramNode(relationships.getEndNode()).getName());
+					String startNode = getDiagramNode(startN).getId();
+					String endNode = getDiagramNode(relationships.getEndNode()).getId();
+					relationshipLinkedSet.addtoSet(startNode, endNode);
 					}
 					else if(relationships.getInRoleHeader2().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader1().toLowerCase().contains("STEPS".toLowerCase())) {
-						System.out.println(getDiagramNode(startN).getName() +"<--"+ getDiagramNode(relationships.getEndNode()).getName());
-						
+						//System.out.println(getDiagramNode(startN).getName() +"<--"+ getDiagramNode(relationships.getEndNode()).getName());
+						String endNode = getDiagramNode(startN).getId();
+						String startNode = getDiagramNode(relationships.getEndNode()).getId();
+						relationshipLinkedSet.addtoSet(startNode, endNode);
 					}
 				}
 			}
 			//counter++;
 		}
+		
+			List<Relationships> rList = relationshipLinkedSet.getRelationshipsList();
+			
+			for(Relationships r: rList) {
+				System.out.println(getDiagramNode(r.getStartNode()).getName() +"-->"+ getDiagramNode(r.getEndNode()).getName());
+			}
+		
 		//System.out.println("Records returned by  for each " + counter);
 		
 //		while(reListIterator.has) {
@@ -96,6 +108,7 @@ public class CypherQueryBuilder<E> {
 ////			System.out.println("*****************************");
 //		}
 	}
+	
 	
 	
 	private Relationships getRelationshiById(String id) {
