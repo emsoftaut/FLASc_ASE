@@ -1,4 +1,4 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 import java.awt.Dimension;
 import java.awt.Point;

@@ -1,4 +1,4 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -12,10 +12,11 @@ public class CypherQueryBuilder<E> {
 	private List<DiagramNode<E>> diagramNodesList;
 	private Set<String> startNodeSet;
 	private RelationshipLinkedSet relationshipLinkedSet; 
-	
+	private String cypherString;
+	private int queryCounter = 0;
 	public CypherQueryBuilder(){
-		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
 		startNodeSet = new TreeSet<String>();
+		cypherString = "";
 	}
 	
 	public List<Relationships> getRelationshipsList() {
@@ -36,19 +37,25 @@ public class CypherQueryBuilder<E> {
 
 	public void initQueryBuilder() {
 		
+		DiagramNode<E> startNode, endNode = null;
 		for(Relationships rel: relationshipsList) {
 			startNodeSet.add(rel.getStartNode());
 		}
 		
-		populateRelationshipsLinkedList();
-		List<Relationships> rList = relationshipLinkedSet.getRelationshipsList();
-			
-		for(Relationships r: rList) {
-			System.out.println(getDiagramNode(r.getStartNode()).getName() +"-->"+ getDiagramNode(r.getEndNode()).getName());
+		Iterator<E> relItr = populateRelationshipsLinkedList().iterator();
+		
+		while(relItr.hasNext()) {
+			Relationships r = (Relationships) relItr.next();
+			startNode = getDiagramNode(r.getStartNode());
+			endNode = getDiagramNode(r.getEndNode());
+			cypherString += createCypherQuery(startNode, endNode);
+			queryCounter++;
 		}
+		System.out.println("Cypher String is \n" + cypherString);
 	}
 
-	private void populateRelationshipsLinkedList() {
+	private RelationshipLinkedSet populateRelationshipsLinkedList() {
+		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
 		
 		for(String startN : startNodeSet ) {
 			for(Relationships relationships : relationshipsList) {
@@ -70,8 +77,30 @@ public class CypherQueryBuilder<E> {
 				}
 			}
 		}
+		return relationshipLinkedSet;
 	}
 
+	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
+		
+		System.out.println(startNode +"-->"+ endNode);
+		String cString = "", startStr, endStr = "";
+		//System.out.println(queryCounter);
+		if(startNode.getLabel().toString().equalsIgnoreCase(Label.DAP.toString())) {
+			startStr = "(" +"root" +queryCounter+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
+																			 ",id:" + "\""+ startNode.getId() + "\"" +
+																			 ",sub_label:" + "\""+ startNode.getLabel() + "\"" +"}"+")";
+			
+			
+			endStr	= "(" + "task"+ queryCounter +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
+					 														",id:" + "\""+ endNode.getId() + "\"" +
+					 														",sub_label:" + "\""+ endNode.getLabel() + "\"" +"}"+")";
+			
+			cString = startStr + "-[:RT]->" + endStr + ",";
+		}
+		
+		//System.out.println(cypherString);
+		return cString;
+	}
 	
 	private DiagramNode<E> getDiagramNode(String nodeID){
 		

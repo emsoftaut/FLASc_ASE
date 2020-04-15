@@ -1,4 +1,4 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -106,13 +106,16 @@ public class HtmlParser<E> {
 							attribute.getValue().toLowerCase().contains("OPERATION".toLowerCase()))) {
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("OPERATION".toLowerCase())) {
-					
+					String name = attribute.getValue();
+					diagramNode.setName((E) name);
 					diagramNode.setLabel(Label.OPERATION);
-					diagramNode.setName((E) attribute.getValue());
+					//System.out.println(name);
+					
 				}
 				else {
+					String name = attribute.getValue();
 					diagramNode.setLabel(Label.CONDITION);
-					diagramNode.setName((E) attribute.getValue());
+					diagramNode.setName((E) name);
 				}
 			}
 			
@@ -133,11 +136,13 @@ public class HtmlParser<E> {
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("INITIAL STEP".toLowerCase())) {
 					diagramNode.setLabel(Label.INITIAL_STEP);
-					diagramNode.setName((E) attribute.getValue());
+					String name = attribute.getValue();
+					diagramNode.setName((E) name);
 				}
 				else {
 					diagramNode.setLabel(Label.STEPS);
-					diagramNode.setName((E) attribute.getValue());
+					String name = attribute.getValue();
+					diagramNode.setName((E) name);
 				}
 			}
 			
@@ -147,12 +152,14 @@ public class HtmlParser<E> {
 				
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("START".toLowerCase())) {
+					String name = attribute.getValue();
 					diagramNode.setLabel(Label.START);
-					diagramNode.setName((E) attribute.getValue());
+					diagramNode.setName((E) name);
 				}
 				else {
+					String name = attribute.getValue();
 					diagramNode.setLabel(Label.END);
-					diagramNode.setName((E) attribute.getValue());
+					diagramNode.setName((E) name);
 				}
 			}
 			
@@ -162,12 +169,14 @@ public class HtmlParser<E> {
 				
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("HIGH LEVEL".toLowerCase())) {
+					String name = attribute.getValue();
 					diagramNode.setLabel(Label.HIGH_LEVEL);
-					diagramNode.setName((E) attribute.getValue());
+					diagramNode.setName((E) name);
 				}
 				else {
+					String name = attribute.getValue();
 					diagramNode.setLabel(Label.LOW_LEVEL);
-					diagramNode.setName((E) attribute.getValue());
+					diagramNode.setName((E) name);
 				}
 			}
 			

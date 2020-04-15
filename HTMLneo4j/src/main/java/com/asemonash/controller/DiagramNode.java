@@ -1,12 +1,20 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 public class DiagramNode<E> {
 	private String id;
 	private E name;
 	private Label label;
 	private E subLabel;
+	private String shortName;
 	
 	
+	
+	public String getShortName() {
+		return shortName;
+	}
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
 	public String getId() {
 		return id;
 	}

@@ -1,13 +1,14 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
-public class RelationshipLinkedSet<E extends Comparable>{
+public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 
 	private Node<E> firstNode;
 	private int numOfElements;
@@ -27,6 +28,7 @@ public class RelationshipLinkedSet<E extends Comparable>{
 		numOfElements++;
 	}
 
+	@Override
 	public int size() {
 		return this.numOfElements;
 	}
@@ -61,6 +63,11 @@ public class RelationshipLinkedSet<E extends Comparable>{
 		return relList;
 	}
 	
+	@Override
+	public Iterator<E> iterator() {
+		return new RelationshipListIterator<E>(firstNode);
+	}
+	
 	protected class Node<E>{
 		public E startNode;
 		public E endNode;
@@ -70,6 +77,28 @@ public class RelationshipLinkedSet<E extends Comparable>{
 			this.startNode = startNode;
 			this.endNode = endNode;
 			this.next = null;
+		}
+	}
+	
+	protected class RelationshipListIterator<E> implements Iterator<E>{
+		
+		private Node<E> currentNode;
+		
+		public RelationshipListIterator(Node<E> firstNode){
+			currentNode = firstNode;
+		}
+
+		public boolean hasNext() {
+			return (currentNode != null);
+		}
+
+		public E next() {
+			if(hasNext() == false) {
+				throw new NoSuchElementException();
+			}
+			E element = (E) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString());
+			currentNode = currentNode.next;
+			return element;
 		}
 	}
 }

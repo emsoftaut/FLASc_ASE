@@ -1,4 +1,4 @@
-package com.asemonash.htmlparser;
+package com.asemonash.controller;
 
 public class DiagramEdge<E> {
 	private E id;
