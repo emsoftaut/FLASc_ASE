@@ -20,7 +20,6 @@ public class RelationshipLinkedSet<E extends Comparable>{
 		relList = (List<Relationships>) new LinkedList<E>();
 	}
 	
-	
 	private void add(E startNode, E endNode) {
 		Node newNode = new Node<E>(startNode, endNode);
 		newNode.next = firstNode;
@@ -53,6 +52,14 @@ public class RelationshipLinkedSet<E extends Comparable>{
 		return false;
 	}
 
+	public List<Relationships> getRelationshipsList() {
+		Node<E> currentNode = firstNode;
+		while(currentNode != null) {
+			relList.add((Relationships) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString()));
+			currentNode = currentNode.next;
+		}
+		return relList;
+	}
 	
 	protected class Node<E>{
 		public E startNode;
@@ -64,51 +71,5 @@ public class RelationshipLinkedSet<E extends Comparable>{
 			this.endNode = endNode;
 			this.next = null;
 		}
-	}
-	
-	public List<Relationships> getRelationshipsList() {
-		Node<E> currentNode = firstNode;
-		while(currentNode != null) {
-			//System.out.println(currentNode.startNode +"::"+ currentNode.endNode);
-			relList.add((Relationships) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString()));
-			currentNode = currentNode.next;
-		}
-		return relList;
-		//System.out.println("***************");
-	}
-	
-	public static void main(String[] arg) {
-		RelationshipLinkedSet relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
-		
-		
-		long startTime = System.currentTimeMillis();
-		for(int i =0; i < 1000000000; i++) {
-		relationshipLinkedSet.addtoSet("1_2", "1_3");
-		relationshipLinkedSet.addtoSet("3_2", "3_3");
-		relationshipLinkedSet.addtoSet("1_2", "1_3");
-		
-		relationshipLinkedSet.addtoSet("2_2", "2_3");
-		relationshipLinkedSet.addtoSet("2_2", "2_3");
-		relationshipLinkedSet.addtoSet("3_2", "3_3");
-		relationshipLinkedSet.addtoSet("3_2", "3_3");
-		relationshipLinkedSet.addtoSet("3_2", "3_3");
-		relationshipLinkedSet.addtoSet("3_2", "3_3");
-		relationshipLinkedSet.addtoSet("2_2", "2_3");
-		relationshipLinkedSet.addtoSet("1_2", "1_3");
-		relationshipLinkedSet.addtoSet("1_2", "1_3");
-		relationshipLinkedSet.addtoSet("3_2", "1_4");
-		relationshipLinkedSet.addtoSet("3_2", "1_4");
-		relationshipLinkedSet.addtoSet("3_2", "1_4");
-		}
-		relationshipLinkedSet.addtoSet("chandan", "sudha");
-		relationshipLinkedSet.addtoSet("chandan", "sudha");
-		//System.out.println(relationshipLinkedSet.size());
-		
-		//relationshipLinkedSet.display();
-		System.out.println("Start time -->"+startTime);
-		long startMinutes = TimeUnit.MILLISECONDS.toSeconds(startTime);
-		long endTime = System.currentTimeMillis();
-		long endMinutes = TimeUnit.MILLISECONDS.toSeconds(endTime);
-		System.out.println("Start Time-->" + startMinutes +" End time -->" + endMinutes);
 	}
 }

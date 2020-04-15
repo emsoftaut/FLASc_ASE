@@ -15,6 +15,7 @@ public class CypherQueryBuilder<E> {
 	
 	public CypherQueryBuilder(){
 		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
+		startNodeSet = new TreeSet<String>();
 	}
 	
 	public List<Relationships> getRelationshipsList() {
@@ -34,90 +35,43 @@ public class CypherQueryBuilder<E> {
 	}
 
 	public void initQueryBuilder() {
-		startNodeSet = new TreeSet<String>();
 		
-		ListIterator<Relationships> reListIterator = relationshipsList.listIterator();
-		System.out.println("hello" + reListIterator.hasNext());
-		
-		int listIteCounter = 0;
-		while(reListIterator.hasNext()) {
-			
-			//System.out.println(reListIterator.getClass());
-			Relationships rel = reListIterator.next();
+		for(Relationships rel: relationshipsList) {
 			startNodeSet.add(rel.getStartNode());
-			//System.out.println(rel);
-			listIteCounter++;
-			//reListIterator.next();
 		}
 		
-		//System.out.println("Records returned by List Iterator " + listIteCounter);
-		
-		int counter = 0; 
+		populateRelationshipsLinkedList();
+		List<Relationships> rList = relationshipLinkedSet.getRelationshipsList();
+			
+		for(Relationships r: rList) {
+			System.out.println(getDiagramNode(r.getStartNode()).getName() +"-->"+ getDiagramNode(r.getEndNode()).getName());
+		}
+	}
+
+	private void populateRelationshipsLinkedList() {
 		
 		for(String startN : startNodeSet ) {
-			//System.out.println("The start node is"+startN);
 			for(Relationships relationships : relationshipsList) {
 				if(startN.equals(relationships.getStartNode())) {
 					if(relationships.getInRoleHeader1().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader2().toLowerCase().contains("STEPS".toLowerCase())) {
-					//System.out.println(getDiagramNode(startN).getName() +"-->"+ getDiagramNode(relationships.getEndNode()).getName());
+						
 					String startNode = getDiagramNode(startN).getId();
 					String endNode = getDiagramNode(relationships.getEndNode()).getId();
 					relationshipLinkedSet.addtoSet(startNode, endNode);
 					}
 					else if(relationships.getInRoleHeader2().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader1().toLowerCase().contains("STEPS".toLowerCase())) {
-						//System.out.println(getDiagramNode(startN).getName() +"<--"+ getDiagramNode(relationships.getEndNode()).getName());
+						
 						String endNode = getDiagramNode(startN).getId();
 						String startNode = getDiagramNode(relationships.getEndNode()).getId();
 						relationshipLinkedSet.addtoSet(startNode, endNode);
 					}
 				}
 			}
-			//counter++;
 		}
-		
-			List<Relationships> rList = relationshipLinkedSet.getRelationshipsList();
-			
-			for(Relationships r: rList) {
-				System.out.println(getDiagramNode(r.getStartNode()).getName() +"-->"+ getDiagramNode(r.getEndNode()).getName());
-			}
-		
-		//System.out.println("Records returned by  for each " + counter);
-		
-//		while(reListIterator.has) {
-//			System.out.println("PREVIOUS "+reListIterator.previous());
-//			System.out.println("CURRENT " + reListIterator);
-//			System.out.println("NEXT " +reListIterator.next());
-//		}
-		
-//		for(Relationships r : this.relationshipsList) {
-//			
-//			//System.out.println(r);
-//			if(r.getInRoleHeader2().toLowerCase().contains("steps".toLowerCase())) {
-//				//System.out.println("ROOT-->" + getDiagramNode(r.getStartNode()));
-//				System.out.println(r);
-//			}
-////			else if(r.getInRoleHeader2().toLowerCase().contains("initial".toLowerCase())) {
-////				System.out.println("LEAF-->" + getDiagramNode(r.getStartNode()));
-////			}
-//			
-////			System.out.println("Start Node "+getDiagramNode(r.getStartNode()));
-////			System.out.println("End Node "+getDiagramNode(r.getEndNode()));
-////			System.out.println(r);
-////			System.out.println("*****************************");
-//		}
 	}
-	
-	
-	
-	private Relationships getRelationshiById(String id) {
-		Relationships rel = null;
-		for(Relationships relationships: relationshipsList) {
-			
-		}
-		return rel;
-	}
+
 	
 	private DiagramNode<E> getDiagramNode(String nodeID){
 		
@@ -129,6 +83,4 @@ public class CypherQueryBuilder<E> {
 		}
 		return diagramNode;	
 	}
-	
-	
 }
