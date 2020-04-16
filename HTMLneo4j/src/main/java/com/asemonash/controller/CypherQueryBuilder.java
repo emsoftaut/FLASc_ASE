@@ -8,6 +8,8 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.w3c.dom.css.ElementCSSInlineStyle;
+
 public class CypherQueryBuilder<E> {
 	private List<Relationships> relationshipsList;
 	private List<DiagramNode<E>> diagramNodesList;
@@ -40,7 +42,6 @@ public class CypherQueryBuilder<E> {
 	}
 
 	public void initQueryBuilder() {
-
 		DiagramNode<E> startNode, endNode = null;
 		for(Relationships rel: relationshipsList) {
 			startNodeSet.add(rel.getStartNode());
@@ -53,6 +54,10 @@ public class CypherQueryBuilder<E> {
 			Relationships r = (Relationships) relItr.next();
 			startNode = getDiagramNode(r.getStartNode());
 			endNode = getDiagramNode(r.getEndNode());
+			if(startNode==null || endNode == null) {
+				continue;
+			}
+			System.out.println("err1"+ endNode);
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
 		System.out.println("Cypher String is \n" + cypherString);
@@ -72,6 +77,7 @@ public class CypherQueryBuilder<E> {
 		}
 		else {
 			if(startNode.getLabel() == Label.TASK) {
+				System.out.println("ERROR "+ endNode);
 				endNode.setLabel(Label.SUB_TASK);
 			}
 			startStr = "(" +startNode.getAlias()+ ")";
@@ -116,6 +122,19 @@ public class CypherQueryBuilder<E> {
 						
 						String endNode = getDiagramNode(startN).getId();
 						String startNode = getDiagramNode(relationships.getEndNode()).getId();
+						relationshipLinkedSet.addtoSet(startNode, endNode);
+					}
+					else if (relationships.getInRoleHeader1().toLowerCase().contains("FROM".toLowerCase()) &&
+							relationships.getInRoleHeader2().toLowerCase().contains("TO".toLowerCase())) {
+						String startNode = getDiagramNode(startN).getId();
+						System.out.println("At cypher query builder-->" + relationships.getEndNode());
+						String endNode = relationships.getEndNode();
+						relationshipLinkedSet.addtoSet(startNode, endNode);
+					}
+					else if (relationships.getInRoleHeader1().toLowerCase().contains("TO".toLowerCase()) &&
+							relationships.getInRoleHeader2().toLowerCase().contains("FROM".toLowerCase())) {
+						String endNode = getDiagramNode(startN).getId();
+						String startNode = relationships.getEndNode();
 						relationshipLinkedSet.addtoSet(startNode, endNode);
 					}
 				}

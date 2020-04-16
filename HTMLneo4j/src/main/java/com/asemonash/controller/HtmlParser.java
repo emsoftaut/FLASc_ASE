@@ -61,6 +61,7 @@ public class HtmlParser<E> {
 				if(isNode) {
 					if(diagramNode.getId() == null) {
 						//A DEBUG CHECK TO FIND THE NODES THAT HAVE id ASSIGNED AS NULL
+						System.out.println(diagramNode);
 						System.out.println("The diagram nodes with null id "+diagramNode);
 						continue;
 					}
@@ -214,6 +215,7 @@ public class HtmlParser<E> {
 			if(attribute.getKey().equalsIgnoreCase("href")) {
 				if(isNode == true) {
 					String nodeID = attribute.getValue().substring(1);
+					System.out.println("in htmlParser"+nodeID);
 					diagramNode.setId(nodeID);
 					
 				}
@@ -221,6 +223,9 @@ public class HtmlParser<E> {
 					String edgeID = attribute.getValue().substring(1);
 					diagramEdge.setId((E) edgeID);
 				}
+			}
+			if(attribute.getKey().equalsIgnoreCase("nohref")) {
+				continue;
 			}
 		}
 		
