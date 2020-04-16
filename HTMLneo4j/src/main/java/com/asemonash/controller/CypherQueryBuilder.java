@@ -1,5 +1,6 @@
 package com.asemonash.controller;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,6 +15,9 @@ public class CypherQueryBuilder<E> {
 	private RelationshipLinkedSet relationshipLinkedSet; 
 	private String cypherString;
 	private int queryCounter = 0;
+	private int edgeCounter = 0;
+	private ArrayList<String> startNodeList;
+	//private ArrayList<String> endNodeList;
 	public CypherQueryBuilder(){
 		startNodeSet = new TreeSet<String>();
 		cypherString = "";
@@ -36,24 +40,64 @@ public class CypherQueryBuilder<E> {
 	}
 
 	public void initQueryBuilder() {
-		
+
 		DiagramNode<E> startNode, endNode = null;
 		for(Relationships rel: relationshipsList) {
 			startNodeSet.add(rel.getStartNode());
 		}
 		
 		Iterator<E> relItr = populateRelationshipsLinkedList().iterator();
-		
+		startNodeList = new ArrayList<String>();
+	
 		while(relItr.hasNext()) {
 			Relationships r = (Relationships) relItr.next();
 			startNode = getDiagramNode(r.getStartNode());
 			endNode = getDiagramNode(r.getEndNode());
-			cypherString += createCypherQuery(startNode, endNode);
-			queryCounter++;
+			cypherString += createCypherQuery(startNode, endNode);	
 		}
 		System.out.println("Cypher String is \n" + cypherString);
 	}
-
+	
+	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
+		String cString = "", startStr, endStr = "";
+	
+		if(!(startNodeList.contains(startNode.toString()))) {
+			queryCounter++;
+			if(startNode.getLabel() == Label.TASK) {
+				endNode.setLabel(Label.SUB_TASK);
+			}
+			startStr = "(" + startNode.getAlias()+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
+			",id:" + "\""+ startNode.getId() + "\"" +
+			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +"}"+")";
+		}
+		else {
+			if(startNode.getLabel() == Label.TASK) {
+				endNode.setLabel(Label.SUB_TASK);
+			}
+			startStr = "(" +startNode.getAlias()+ ")";
+		}
+		
+		if(!(startNodeList.contains(endNode.toString()))) {
+			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
+			",id:" + "\""+ endNode.getId() + "\"" +
+			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
+			edgeCounter++;
+		}
+		else {
+			endStr = "(" + endNode.getAlias() + ")";
+		}
+		
+		if(startNode.getLabel() == Label.DAP) {
+			cString = startStr + "-[:RT]->" + endStr + ",";
+		}
+		else {
+			cString = startStr + "-[:TS]->" + endStr + ",";
+		}
+		startNodeList.add(startNode.toString());
+		return cString;
+}
+	
+	
 	private RelationshipLinkedSet populateRelationshipsLinkedList() {
 		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
 		
@@ -80,27 +124,7 @@ public class CypherQueryBuilder<E> {
 		return relationshipLinkedSet;
 	}
 
-	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
-		
-		System.out.println(startNode +"-->"+ endNode);
-		String cString = "", startStr, endStr = "";
-		//System.out.println(queryCounter);
-		if(startNode.getLabel().toString().equalsIgnoreCase(Label.DAP.toString())) {
-			startStr = "(" +"root" +queryCounter+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
-																			 ",id:" + "\""+ startNode.getId() + "\"" +
-																			 ",sub_label:" + "\""+ startNode.getLabel() + "\"" +"}"+")";
-			
-			
-			endStr	= "(" + "task"+ queryCounter +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
-					 														",id:" + "\""+ endNode.getId() + "\"" +
-					 														",sub_label:" + "\""+ endNode.getLabel() + "\"" +"}"+")";
-			
-			cString = startStr + "-[:RT]->" + endStr + ",";
-		}
-		
-		//System.out.println(cypherString);
-		return cString;
-	}
+
 	
 	private DiagramNode<E> getDiagramNode(String nodeID){
 		

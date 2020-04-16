@@ -5,15 +5,13 @@ public class DiagramNode<E> {
 	private E name;
 	private Label label;
 	private E subLabel;
-	private String shortName;
+	private String alias;
 	
-	
-	
-	public String getShortName() {
-		return shortName;
+	public String getAlias() {
+		return alias;
 	}
-	public void setShortName(String shortName) {
-		this.shortName = shortName;
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 	public String getId() {
 		return id;

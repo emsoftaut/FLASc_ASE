@@ -116,6 +116,7 @@ public class HtmlParser<E> {
 					String name = attribute.getValue();
 					diagramNode.setLabel(Label.CONDITION);
 					diagramNode.setName((E) name);
+					//System.out.println(name);
 				}
 			}
 			
@@ -127,6 +128,8 @@ public class HtmlParser<E> {
 				String subValue = value.substring(0, value.indexOf(":"));
 
 				diagramNode.setName((E)subValue);
+				//System.out.println(subValue);
+				diagramNode.setAlias(subValue.replace(" ", ""));
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
@@ -138,11 +141,13 @@ public class HtmlParser<E> {
 					diagramNode.setLabel(Label.INITIAL_STEP);
 					String name = attribute.getValue();
 					diagramNode.setName((E) name);
+					//System.out.println(name);
 				}
 				else {
 					diagramNode.setLabel(Label.STEPS);
 					String name = attribute.getValue();
 					diagramNode.setName((E) name);
+					//System.out.println(name);
 				}
 			}
 			
@@ -155,11 +160,13 @@ public class HtmlParser<E> {
 					String name = attribute.getValue();
 					diagramNode.setLabel(Label.START);
 					diagramNode.setName((E) name);
+					//System.out.println(name);
 				}
 				else {
 					String name = attribute.getValue();
 					diagramNode.setLabel(Label.END);
 					diagramNode.setName((E) name);
+					//System.out.println(name);
 				}
 			}
 			
@@ -188,6 +195,8 @@ public class HtmlParser<E> {
 				String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
 				diagramNode.setName((E)subValue);
+				//System.out.println(subValue);
+				diagramNode.setAlias(subValue.replace(" ", ""));
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
@@ -198,6 +207,8 @@ public class HtmlParser<E> {
 				String subLabel = value.substring(value.indexOf(":"), value.length());
 				diagramNode.setName((E)subValue);
 				diagramNode.setSubLabel((E)subLabel);
+				
+				diagramNode.setAlias(subValue.replace(" ", ""));
 			}
 			
 			if(attribute.getKey().equalsIgnoreCase("href")) {
