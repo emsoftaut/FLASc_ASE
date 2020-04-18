@@ -61,7 +61,7 @@ public class HtmlParser<E> {
 				if(isNode) {
 					if(diagramNode.getId() == null) {
 						//A DEBUG CHECK TO FIND THE NODES THAT HAVE id ASSIGNED AS NULL
-						System.out.println(diagramNode);
+						//System.out.println(diagramNode);
 						System.out.println("The diagram nodes with null id "+diagramNode);
 						continue;
 					}
@@ -130,12 +130,12 @@ public class HtmlParser<E> {
 
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
-				diagramNode.setAlias(subValue.replace(" ", ""));
+				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
-					attribute.getValue().toLowerCase().contains("INITIAL STEP".toLowerCase()) ||
-					attribute.getValue().toLowerCase().contains("STEPS".toLowerCase())) {
+					attribute.getValue().equalsIgnoreCase("INITIAL STEP") ||
+					attribute.getValue().equalsIgnoreCase("STEPS")) {
 				
 				isNode = true;
 				if(attribute.getValue().toLowerCase().contains("INITIAL STEP".toLowerCase())) {
@@ -153,11 +153,11 @@ public class HtmlParser<E> {
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
-					attribute.getValue().toLowerCase().contains("START".toLowerCase()) ||
-					attribute.getValue().toLowerCase().contains("END".toLowerCase())) {
+					attribute.getValue().equalsIgnoreCase("START") ||
+					attribute.getValue().equalsIgnoreCase("END")) {
 				
 				isNode = true;
-				if(attribute.getValue().toLowerCase().contains("START".toLowerCase())) {
+				if(attribute.getValue().equalsIgnoreCase("START")) {
 					String name = attribute.getValue();
 					diagramNode.setLabel(Label.START);
 					diagramNode.setName((E) name);
@@ -197,11 +197,11 @@ public class HtmlParser<E> {
 				String subValue = value.substring(0, value.indexOf(":"));
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
-				diagramNode.setAlias(subValue.replace(" ", ""));
+				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
-				isNode = true;
+				
 				diagramNode.setLabel(Label.SUB_TASK);
 				String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
@@ -209,20 +209,28 @@ public class HtmlParser<E> {
 				diagramNode.setName((E)subValue);
 				diagramNode.setSubLabel((E)subLabel);
 				
-				diagramNode.setAlias(subValue.replace(" ", ""));
+				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
+				isNode = true;
+				System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
+				
 			}
 			
 			if(attribute.getKey().equalsIgnoreCase("href")) {
-				if(isNode == true) {
+				
+				System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
+				
+				//if(isNode == true) {
 					String nodeID = attribute.getValue().substring(1);
 					System.out.println("in htmlParser"+nodeID);
+					//System.out.println(diagramNode);
+					
 					diagramNode.setId(nodeID);
 					
-				}
-				else {
+				//}
+//				else {
 					String edgeID = attribute.getValue().substring(1);
 					diagramEdge.setId((E) edgeID);
-				}
+//				}
 			}
 			if(attribute.getKey().equalsIgnoreCase("nohref")) {
 				continue;

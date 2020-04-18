@@ -57,7 +57,7 @@ public class CypherQueryBuilder<E> {
 			if(startNode==null || endNode == null) {
 				continue;
 			}
-			System.out.println("err1"+ endNode);
+			//System.out.println("err1"+ endNode);
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
 		System.out.println("Cypher String is \n" + cypherString);
@@ -66,7 +66,7 @@ public class CypherQueryBuilder<E> {
 	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
 		String cString = "", startStr, endStr = "";
 	
-		if(!(startNodeList.contains(startNode.toString()))) {
+		if(!(startNodeList.contains(startNode.getAlias()))) {
 			queryCounter++;
 			if(startNode.getLabel() == Label.TASK) {
 				endNode.setLabel(Label.SUB_TASK);
@@ -77,19 +77,25 @@ public class CypherQueryBuilder<E> {
 		}
 		else {
 			if(startNode.getLabel() == Label.TASK) {
-				System.out.println("ERROR "+ endNode);
+				//System.out.println("ERROR "+ endNode);
 				endNode.setLabel(Label.SUB_TASK);
 			}
 			startStr = "(" +startNode.getAlias()+ ")";
 		}
 		
-		if(!(startNodeList.contains(endNode.toString()))) {
+		if(!(startNodeList.contains(endNode.getAlias()))) {
+			if(startNode.getLabel() == Label.TASK) {
+				endNode.setLabel(Label.SUB_TASK);
+			}
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
 			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
 			edgeCounter++;
 		}
 		else {
+			if(startNode.getLabel() == Label.TASK) {
+				endNode.setLabel(Label.SUB_TASK);
+			}
 			endStr = "(" + endNode.getAlias() + ")";
 		}
 		
@@ -99,7 +105,12 @@ public class CypherQueryBuilder<E> {
 		else {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
-		startNodeList.add(startNode.toString());
+		
+		System.out.println(cString);
+		//System.out.println(startNode +"__>"+ endNode);
+		
+		startNodeList.add(startNode.getAlias());
+		startNodeList.add(endNode.getAlias());
 		return cString;
 }
 	
@@ -127,7 +138,7 @@ public class CypherQueryBuilder<E> {
 					else if (relationships.getInRoleHeader1().toLowerCase().contains("FROM".toLowerCase()) &&
 							relationships.getInRoleHeader2().toLowerCase().contains("TO".toLowerCase())) {
 						String startNode = getDiagramNode(startN).getId();
-						System.out.println("At cypher query builder-->" + relationships.getEndNode());
+						//System.out.println("At cypher query builder-->" + relationships.getEndNode());
 						String endNode = relationships.getEndNode();
 						relationshipLinkedSet.addtoSet(startNode, endNode);
 					}

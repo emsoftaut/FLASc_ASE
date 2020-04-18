@@ -40,8 +40,11 @@ public class DiagramNode<E> {
 	}
 	@Override
 	public String toString() {
-		return "DiagramNode [id=" + id + ", name=" + name + ", label=" + label + ", subLabel=" + subLabel + "]";
+		return "DiagramNode [id=" + id + ", name=" + name + ", label=" + label + ", subLabel=" + subLabel + ", alias="
+				+ alias + "]";
 	}
+	
+	
 	
 	
 	
