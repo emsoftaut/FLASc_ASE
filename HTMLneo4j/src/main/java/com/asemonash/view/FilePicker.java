@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.asemonash.controller.CypherQueryBuilder;
+import com.asemonash.controller.QueryStringBuilder;
 import com.asemonash.controller.HtmlParser;
 
 public class FilePicker extends JPanel implements ActionListener {
@@ -40,10 +40,10 @@ public class FilePicker extends JPanel implements ActionListener {
 				File file = fileChooser.getSelectedFile();
 				HtmlParser htmlParser = new HtmlParser(file);
 				htmlParser.initHtmlParser();
-				CypherQueryBuilder cypherQueryBuilder = new CypherQueryBuilder();
-				cypherQueryBuilder.setRelationshipsList(htmlParser.getRelationshipsList());
-				cypherQueryBuilder.setDiagramNodesList(htmlParser.getDiagramNodesList());
-				cypherQueryBuilder.initQueryBuilder();
+				QueryStringBuilder queryBuilder = new QueryStringBuilder();
+				queryBuilder.setRelationshipsList(htmlParser.getRelationshipsList());
+				queryBuilder.setDiagramNodesList(htmlParser.getDiagramNodesList());
+				queryBuilder.initQueryBuilder();
 			}
 		}
 	}

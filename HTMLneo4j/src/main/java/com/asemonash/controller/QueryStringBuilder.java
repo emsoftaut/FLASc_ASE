@@ -16,21 +16,19 @@ import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
 import com.asemonash.model.Model;
 
-public class CypherQueryBuilder<E> {
+public class QueryStringBuilder<E> {
 	private List<Relationships> relationshipsList;
 	private List<DiagramNode<E>> diagramNodesList;
 	private Set<String> startNodeSet;
 	private RelationshipLinkedSet relationshipLinkedSet; 
 	private String cypherString;
-	private int queryCounter = 0;
-	private int edgeCounter = 0;
 	private ArrayList<String> startNodeList;
 	private Model model;
-	//private ArrayList<String> endNodeList;
-	public CypherQueryBuilder(){
+	
+	
+	public QueryStringBuilder(){
 		startNodeSet = new TreeSet<String>();
 		cypherString = "";
-		//model = new Model();
 	}
 	
 	public List<Relationships> getRelationshipsList() {
@@ -51,24 +49,15 @@ public class CypherQueryBuilder<E> {
 
 	public void initQueryBuilder() {
 		DiagramNode<E> startNode, endNode = null;
-		for(Relationships rel: relationshipsList) {
-			startNodeSet.add(rel.getStartNode());
-		}
+		Iterator<E> relItr = null;
 		
-		Iterator<E> relItr = populateRelationshipsLinkedList().iterator();
-		startNodeList = new ArrayList<String>();
-	
+		relItr = populateRelationshipsLinkedList().iterator();
 		while(relItr.hasNext()) {
 			Relationships r = (Relationships) relItr.next();
 			startNode = getDiagramNode(r.getStartNode());
 			endNode = getDiagramNode(r.getEndNode());
-			if(startNode==null || endNode == null) {
-				continue;
-			}
-			//System.out.println("err1"+ endNode);
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
-		//System.out.println("Cypher String is \n" + cypherString);
 		new Model(cypherString).createCypherSyntax();
 	}
 	
@@ -76,7 +65,7 @@ public class CypherQueryBuilder<E> {
 		String cString = "", startStr, endStr = "";
 	
 		if(!(startNodeList.contains(startNode.getAlias()))) {
-			queryCounter++;
+			//queryCounter++;
 			if(startNode.getLabel() == Label.TASK) {
 				endNode.setLabel(Label.SUB_TASK);
 			}
@@ -99,7 +88,7 @@ public class CypherQueryBuilder<E> {
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
 			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
-			edgeCounter++;
+			//edgeCounter++;
 		}
 		else {
 			if(startNode.getLabel() == Label.TASK) {
@@ -125,7 +114,12 @@ public class CypherQueryBuilder<E> {
 	
 	
 	private RelationshipLinkedSet populateRelationshipsLinkedList() {
+		startNodeList = new ArrayList<String>();
 		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
+		
+		for(Relationships rel: relationshipsList) {
+			startNodeSet.add(rel.getStartNode());
+		}
 		
 		for(String startN : startNodeSet ) {
 			for(Relationships relationships : relationshipsList) {
