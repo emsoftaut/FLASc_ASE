@@ -1,4 +1,4 @@
-package com.asemonash.controller;
+package com.asemonash.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -11,6 +11,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.asemonash.controller.CypherQueryBuilder;
+import com.asemonash.controller.HtmlParser;
 
 public class FilePicker extends JPanel implements ActionListener {
 	private final static int PANEL_WIDTH = 300;

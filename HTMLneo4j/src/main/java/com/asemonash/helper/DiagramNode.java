@@ -1,4 +1,4 @@
-package com.asemonash.controller;
+package com.asemonash.helper;
 
 public class DiagramNode<E> {
 	private String id;

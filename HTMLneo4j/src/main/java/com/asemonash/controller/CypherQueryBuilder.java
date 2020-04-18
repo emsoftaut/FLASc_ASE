@@ -10,6 +10,12 @@ import java.util.TreeSet;
 
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
+import com.asemonash.helper.DiagramNode;
+import com.asemonash.helper.Label;
+import com.asemonash.helper.RelationshipLinkedSet;
+import com.asemonash.helper.Relationships;
+import com.asemonash.model.Model;
+
 public class CypherQueryBuilder<E> {
 	private List<Relationships> relationshipsList;
 	private List<DiagramNode<E>> diagramNodesList;
@@ -19,10 +25,12 @@ public class CypherQueryBuilder<E> {
 	private int queryCounter = 0;
 	private int edgeCounter = 0;
 	private ArrayList<String> startNodeList;
+	private Model model;
 	//private ArrayList<String> endNodeList;
 	public CypherQueryBuilder(){
 		startNodeSet = new TreeSet<String>();
 		cypherString = "";
+		//model = new Model();
 	}
 	
 	public List<Relationships> getRelationshipsList() {
@@ -60,7 +68,8 @@ public class CypherQueryBuilder<E> {
 			//System.out.println("err1"+ endNode);
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
-		System.out.println("Cypher String is \n" + cypherString);
+		//System.out.println("Cypher String is \n" + cypherString);
+		new Model(cypherString).createCypherSyntax();
 	}
 	
 	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
@@ -106,7 +115,7 @@ public class CypherQueryBuilder<E> {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
 		
-		System.out.println(cString);
+		//System.out.println(cString);
 		//System.out.println(startNode +"__>"+ endNode);
 		
 		startNodeList.add(startNode.getAlias());

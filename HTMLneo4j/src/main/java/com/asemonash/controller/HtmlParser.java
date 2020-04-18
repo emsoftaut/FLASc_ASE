@@ -19,6 +19,11 @@ import org.jsoup.select.Evaluator;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
+import com.asemonash.helper.DiagramEdge;
+import com.asemonash.helper.DiagramNode;
+import com.asemonash.helper.Label;
+import com.asemonash.helper.Relationships;
+
 
 public class HtmlParser<E> {
 	
@@ -211,17 +216,17 @@ public class HtmlParser<E> {
 				
 				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
 				isNode = true;
-				System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
+				//System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
 				
 			}
 			
 			if(attribute.getKey().equalsIgnoreCase("href")) {
 				
-				System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
+				//System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
 				
 				//if(isNode == true) {
 					String nodeID = attribute.getValue().substring(1);
-					System.out.println("in htmlParser"+nodeID);
+					//System.out.println("in htmlParser"+nodeID);
 					//System.out.println(diagramNode);
 					
 					diagramNode.setId(nodeID);

@@ -1,4 +1,4 @@
-package com.asemonash.controller;
+package com.asemonash.helper;
 
 public class Relationships {
 	private String startNode;
