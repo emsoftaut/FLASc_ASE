@@ -135,7 +135,7 @@ public class HtmlParser<E> {
 
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
-				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
+				diagramNode.setAlias(subValue.replaceAll("[-/() ]", ""));
 			}
 			
 			else if(attribute.getKey().equalsIgnoreCase("alt") &&
@@ -202,7 +202,7 @@ public class HtmlParser<E> {
 				String subValue = value.substring(0, value.indexOf(":"));
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
-				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
+				diagramNode.setAlias(subValue.replaceAll("[-/() ]", ""));
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
@@ -214,7 +214,7 @@ public class HtmlParser<E> {
 				diagramNode.setName((E)subValue);
 				diagramNode.setSubLabel((E)subLabel);
 				
-				diagramNode.setAlias(subValue.replaceAll("[/() ]", ""));
+				diagramNode.setAlias(subValue.replaceAll("[-/() ]", ""));
 				isNode = true;
 				//System.out.println(attribute.getKey() +"-->"+ attribute.getValue() +"--"+ isNode);
 				

@@ -1,0 +1,54 @@
+package com.asemonash.model;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.neo4j.driver.AccessMode;
+import org.neo4j.driver.AuthToken;
+import org.neo4j.driver.AuthTokens;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Session;
+import org.neo4j.driver.Transaction;
+import org.neo4j.driver.TransactionWork;
+
+public class DatabaseConnector implements AutoCloseable {
+	
+	
+	private Driver driver;
+	private Session session;
+	
+	public DatabaseConnector(String uri, String user, String password) {
+		driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
+		session = driver.session();
+	}
+	
+
+	public void runInitialCypherScript(String cypherQuery) {
+		session.run(cypherQuery);
+	}
+	
+	public boolean recordsExist() {
+		Result result = session.run("MATCH (a) RETURN a.name, a.id");
+		//
+		List<Record> rList = result.list();
+		if(rList.isEmpty()) {
+			return false;
+		}
+
+		else {
+			for(Record record : rList) {
+				System.out.println(record);
+			}
+			return true;
+		}
+	}
+	
+	public void close() throws Exception {
+		driver.close();
+	}
+
+}

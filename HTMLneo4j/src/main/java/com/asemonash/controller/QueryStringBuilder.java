@@ -14,7 +14,7 @@ import com.asemonash.helper.DiagramNode;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
-import com.asemonash.model.Model;
+import com.asemonash.model.CypherQueryBuilder;
 
 public class QueryStringBuilder<E> {
 	private List<Relationships> relationshipsList;
@@ -23,7 +23,7 @@ public class QueryStringBuilder<E> {
 	private RelationshipLinkedSet relationshipLinkedSet; 
 	private String cypherString;
 	private ArrayList<String> startNodeList;
-	private Model model;
+	private CypherQueryBuilder model;
 	
 	
 	public QueryStringBuilder(){
@@ -58,42 +58,36 @@ public class QueryStringBuilder<E> {
 			endNode = getDiagramNode(r.getEndNode());
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
-		new Model(cypherString).createCypherSyntax();
+		new CypherQueryBuilder(cypherString).createCypherSyntax();
 	}
 	
 	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
 		String cString = "", startStr, endStr = "";
+		
+		if(startNode.getLabel()==Label.TASK) {
+			endNode.setLabel(Label.SUB_TASK);
+		}
 	
 		if(!(startNodeList.contains(startNode.getAlias()))) {
-			//queryCounter++;
-			if(startNode.getLabel() == Label.TASK) {
-				endNode.setLabel(Label.SUB_TASK);
-			}
+			
 			startStr = "(" + startNode.getAlias()+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
 			",id:" + "\""+ startNode.getId() + "\"" +
 			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +"}"+")";
 		}
 		else {
-			if(startNode.getLabel() == Label.TASK) {
-				//System.out.println("ERROR "+ endNode);
-				endNode.setLabel(Label.SUB_TASK);
-			}
+			
 			startStr = "(" +startNode.getAlias()+ ")";
 		}
 		
 		if(!(startNodeList.contains(endNode.getAlias()))) {
-			if(startNode.getLabel() == Label.TASK) {
-				endNode.setLabel(Label.SUB_TASK);
-			}
+			
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
 			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
 			//edgeCounter++;
 		}
 		else {
-			if(startNode.getLabel() == Label.TASK) {
-				endNode.setLabel(Label.SUB_TASK);
-			}
+			
 			endStr = "(" + endNode.getAlias() + ")";
 		}
 		
