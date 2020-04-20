@@ -1,5 +1,6 @@
 package com.asemonash.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,10 +21,12 @@ public class DatabaseConnector implements AutoCloseable {
 	
 	private Driver driver;
 	private Session session;
+	private ArrayList<FetchedRecords> recordList;
 	
 	public DatabaseConnector(String uri, String user, String password) {
 		driver = GraphDatabase.driver(uri, AuthTokens.basic(user, password));
 		session = driver.session();
+		recordList = new ArrayList();
 	}
 	
 
@@ -33,7 +36,6 @@ public class DatabaseConnector implements AutoCloseable {
 	
 	public boolean recordsExist() {
 		Result result = session.run("MATCH (a) RETURN a.name, a.id");
-		//
 		List<Record> rList = result.list();
 		if(rList.isEmpty()) {
 			return false;
@@ -41,10 +43,20 @@ public class DatabaseConnector implements AutoCloseable {
 
 		else {
 			for(Record record : rList) {
-				System.out.println(record);
+				String name = record.get("a.name").toString();
+				//name = name.substring(1, name.indexOf("\""));
+				String id = record.get("a.id").toString();
+				id = id.substring(1, id.length() - 1);
+				
+				//System.out.println(name +"-->"+ id);
+				recordList.add(new FetchedRecords(name, id));
 			}
 			return true;
 		}
+	}
+	
+	public ArrayList<FetchedRecords> getRecordsFrmDatabase(){
+		return this.recordList;
 	}
 	
 	public void close() throws Exception {

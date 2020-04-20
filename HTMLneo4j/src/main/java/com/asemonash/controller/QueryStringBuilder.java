@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.neo4j.driver.internal.shaded.io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
 import com.asemonash.helper.DiagramNode;
@@ -23,7 +24,7 @@ public class QueryStringBuilder<E> {
 	private RelationshipLinkedSet relationshipLinkedSet; 
 	private String cypherString;
 	private ArrayList<String> startNodeList;
-	private CypherQueryBuilder model;
+	private CypherQueryBuilder cypherQueryBuilder;
 	
 	
 	public QueryStringBuilder(){
@@ -58,7 +59,16 @@ public class QueryStringBuilder<E> {
 			endNode = getDiagramNode(r.getEndNode());
 			cypherString += createCypherQuery(startNode, endNode);	
 		}
-		new CypherQueryBuilder(cypherString).createCypherSyntax();
+		cypherQueryBuilder = new CypherQueryBuilder(cypherString);
+		//cypherQueryBuilder.createCypherSyntax();
+		
+		if(!(cypherQueryBuilder.createdNewCypherQuery())) {
+			cypherQueryBuilder.createUpdatedCypherQuery(getRelationshipLinkedSet().getRelationshipsList());
+		}
+		else {
+			cypherQueryBuilder.createGraphAnyway();
+			System.out.println("NO MATCH WITH EXISTING DATABASE NODES SO CREATED SEPARATE GRAPH");
+		}
 	}
 	
 	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
@@ -75,7 +85,6 @@ public class QueryStringBuilder<E> {
 			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +"}"+")";
 		}
 		else {
-			
 			startStr = "(" +startNode.getAlias()+ ")";
 		}
 		
@@ -97,9 +106,6 @@ public class QueryStringBuilder<E> {
 		else {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
-		
-		//System.out.println(cString);
-		//System.out.println(startNode +"__>"+ endNode);
 		
 		startNodeList.add(startNode.getAlias());
 		startNodeList.add(endNode.getAlias());
@@ -163,4 +169,9 @@ public class QueryStringBuilder<E> {
 		}
 		return diagramNode;	
 	}
+
+	public RelationshipLinkedSet getRelationshipLinkedSet() {
+		return this.relationshipLinkedSet;
+	}
+	
 }
