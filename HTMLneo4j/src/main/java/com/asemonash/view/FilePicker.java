@@ -21,6 +21,7 @@ public class FilePicker extends JPanel implements ActionListener {
 	
 	private JButton filePicker;
 	private JFileChooser fileChooser;
+	private HtmlParser htmlParser;
 	
 	public FilePicker() {
 		super();
@@ -38,12 +39,9 @@ public class FilePicker extends JPanel implements ActionListener {
 			int returnVal = fileChooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				HtmlParser htmlParser = new HtmlParser(file);
+				htmlParser = new HtmlParser(file);
 				htmlParser.initHtmlParser();
-				QueryStringBuilder queryBuilder = new QueryStringBuilder();
-				queryBuilder.setRelationshipsList(htmlParser.getRelationshipsList());
-				queryBuilder.setDiagramNodesList(htmlParser.getDiagramNodesList());
-				queryBuilder.initQueryBuilder();
+				
 			}
 		}
 	}

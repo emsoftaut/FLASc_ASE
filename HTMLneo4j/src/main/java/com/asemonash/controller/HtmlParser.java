@@ -35,6 +35,7 @@ public class HtmlParser<E> {
 	private List<DiagramNode<E>> diagramNodesList;
 	private List<DiagramEdge<E>> diagramEdgesList;
 	private List<Relationships> relationshipsList;
+	private QueryStringBuilder queryBuilder;
 	//private static <> List<DiagramNode<E>> listDiagramNodes;
 	//private List<E> graphElementsList;
 	/**
@@ -84,6 +85,11 @@ public class HtmlParser<E> {
 			
 			createRelationships(document, diagramNodesList);
 			//displayRelatiosnhips();
+			
+			queryBuilder = new QueryStringBuilder();
+			queryBuilder.setRelationshipsList(this.getRelationshipsList());
+			queryBuilder.setDiagramNodesList(this.getDiagramNodesList());
+			queryBuilder.initQueryBuilder();
 			
 			
 		} catch (IOException e) {

@@ -29,6 +29,7 @@ public class QueryStringBuilder<E> {
 	
 	public QueryStringBuilder(){
 		startNodeSet = new TreeSet<String>();
+		startNodeList = new ArrayList<String>();
 		cypherString = "";
 	}
 	
@@ -63,12 +64,10 @@ public class QueryStringBuilder<E> {
 		//cypherQueryBuilder.createCypherSyntax();
 		
 		if(!(cypherQueryBuilder.createdNewCypherQuery())) {
-			cypherQueryBuilder.createUpdatedCypherQuery(getRelationshipLinkedSet().getRelationshipsList());
+			//System.out.println("HERE");
+			cypherQueryBuilder.createUpdatedCypherQuery(getRelationshipLinkedSet().getRelationshipsList(), diagramNodesList);
 		}
-		else {
-			cypherQueryBuilder.createGraphAnyway();
-			System.out.println("NO MATCH WITH EXISTING DATABASE NODES SO CREATED SEPARATE GRAPH");
-		}
+		
 	}
 	
 	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
@@ -114,7 +113,7 @@ public class QueryStringBuilder<E> {
 	
 	
 	private RelationshipLinkedSet populateRelationshipsLinkedList() {
-		startNodeList = new ArrayList<String>();
+		
 		relationshipLinkedSet = new RelationshipLinkedSet<Comparable>();
 		
 		for(Relationships rel: relationshipsList) {
