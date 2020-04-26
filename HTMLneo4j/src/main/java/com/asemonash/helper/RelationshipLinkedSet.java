@@ -13,16 +13,18 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 	private Node<E> firstNode;
 	private int numOfElements;
 	private List<Relationships> relList;
+	private String inRelationship;
 	
 	public RelationshipLinkedSet() {
 		super();
 		firstNode = null;
 		numOfElements = 0;
 		relList = (List<Relationships>) new LinkedList<E>();
+		inRelationship = "";
 	}
 	
-	private void add(E startNode, E endNode) {
-		Node newNode = new Node<E>(startNode, endNode);
+	private void add(E startNode, E endNode, String inRelationship) {
+		Node newNode = new Node<E>(startNode, endNode, inRelationship);
 		newNode.next = firstNode;
 		firstNode = newNode;
 		numOfElements++;
@@ -33,7 +35,8 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 		return this.numOfElements;
 	}
 	
-	public void addtoSet(E start, E end) {
+	public void addtoSet(E start, E end, String inRelationship) {
+		this.inRelationship = inRelationship;
 		Node<E> currentNode = firstNode;
 		int counter = 0;
 		while(currentNode != null) {
@@ -43,7 +46,7 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 			currentNode = currentNode.next;
 		}
 		if(counter == 0){
-			add(start, end);
+			add(start, end, inRelationship);
 		}
 	}
 	
@@ -57,7 +60,7 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 	public List<Relationships> getRelationshipsList() {
 		Node<E> currentNode = firstNode;
 		while(currentNode != null) {
-			relList.add((Relationships) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString()));
+			relList.add((Relationships) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString(), currentNode.inRelationship));
 			currentNode = currentNode.next;
 		}
 		return relList;
@@ -71,11 +74,13 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 	protected class Node<E>{
 		public E startNode;
 		public E endNode;
+		public String inRelationship;
 		public Node<E> next;
 		
-		public Node(E startNode, E endNode){
+		public Node(E startNode, E endNode, String inRelationship){
 			this.startNode = startNode;
 			this.endNode = endNode;
+			this.inRelationship = inRelationship;
 			this.next = null;
 		}
 	}
@@ -96,7 +101,7 @@ public class RelationshipLinkedSet<E extends Comparable> extends AbstractSet<E>{
 			if(hasNext() == false) {
 				throw new NoSuchElementException();
 			}
-			E element = (E) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString());
+			E element = (E) new Relationships(currentNode.startNode.toString(), currentNode.endNode.toString(), currentNode.inRelationship);
 			currentNode = currentNode.next;
 			return element;
 		}

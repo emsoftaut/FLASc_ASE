@@ -29,6 +29,7 @@ public class DatabaseConnector implements AutoCloseable {
 		recordList = new ArrayList();
 	}
 	
+	
 
 	public void runInitialCypherScript(String cypherQuery) {
 		session.run(cypherQuery);

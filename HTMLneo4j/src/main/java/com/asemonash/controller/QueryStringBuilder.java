@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.neo4j.driver.internal.shaded.io.netty.util.internal.SocketUtils;
 import org.neo4j.driver.internal.shaded.io.netty.util.internal.shaded.org.jctools.queues.ConcurrentCircularArrayQueue;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
@@ -54,11 +55,27 @@ public class QueryStringBuilder<E> {
 		Iterator<E> relItr = null;
 		
 		relItr = populateRelationshipsLinkedList().iterator();
+		
+//		List<Relationships> lr = getRelationshipLinkedSet().getRelationshipsList();
+//		
+//		System.out.println("after removing duplicates");
+//		
+//		for(Relationships r: lr) {
+//			if(!(r.getInRelationship().equalsIgnoreCase(": Arrowed Connector"))) {
+//				
+//				System.out.println(r.getStartNode() +"::"+ r.getEndNode());
+//				
+//				//System.out.println(r.getStartNode() +" data-"+ getDiagramNode(r.getStartNode()).getName() +"::"+ 
+//			//" data-" + getDiagramNode(r.getEndNode()).getName() + r.getEndNode());
+//			}
+//		}
+//		
+		
 		while(relItr.hasNext()) {
 			Relationships r = (Relationships) relItr.next();
 			startNode = getDiagramNode(r.getStartNode());
 			endNode = getDiagramNode(r.getEndNode());
-			cypherString += createCypherQuery(startNode, endNode);	
+			cypherString += createCypherQuery(r,startNode, endNode);	
 		}
 		cypherQueryBuilder = new CypherQueryBuilder(cypherString);
 		//cypherQueryBuilder.createCypherSyntax();
@@ -70,13 +87,14 @@ public class QueryStringBuilder<E> {
 		
 	}
 	
-	private String createCypherQuery(DiagramNode startNode, DiagramNode endNode) {
+	private String createCypherQuery(Relationships r,DiagramNode startNode, DiagramNode endNode) {
 		String cString = "", startStr, endStr = "";
 		
-		if(startNode.getLabel()==Label.TASK) {
-			endNode.setLabel(Label.SUB_TASK);
-		}
-	
+//		if(startNode.getLabel()==Label.TASK) {
+//			endNode.setLabel(Label.SUB_TASK);
+//		}
+//		
+		
 		if(!(startNodeList.contains(startNode.getAlias()))) {
 			
 			startStr = "(" + startNode.getAlias()+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
@@ -99,8 +117,17 @@ public class QueryStringBuilder<E> {
 			endStr = "(" + endNode.getAlias() + ")";
 		}
 		
-		if(startNode.getLabel() == Label.DAP) {
+		
+		if(r.getInRelationship().equalsIgnoreCase(": Condition Correct") || 
+				r.getInRelationship().equalsIgnoreCase(": Condition inCorrect") ) {
+			//System.out.println("The relationship is-->" + startNode.getName() + "##"+ r.getInRelationship() + "##" + endNode.getName());
+			cString = startStr + "-[:"+ r.getInRelationship().replaceAll("[: ]", "")  +"]->"+ endStr + ",";
+			System.out.println("The relationship is-->" + cString);
+			//System.out.println("Rel is-->" + getDiagramNode( r.getStartNode()) +"-"+r.getInRelationship()+"->"+ getDiagramNode( r.getEndNode()));
+		}
+		else if(startNode.getLabel() == Label.DAP) {
 			cString = startStr + "-[:RT]->" + endStr + ",";
+			
 		}
 		else {
 			cString = startStr + "-[:TS]->" + endStr + ",";
@@ -123,32 +150,51 @@ public class QueryStringBuilder<E> {
 		for(String startN : startNodeSet ) {
 			for(Relationships relationships : relationshipsList) {
 				if(startN.equals(relationships.getStartNode())) {
+					//BRAINSTOMRING DIAGRAM
 					if(relationships.getInRoleHeader1().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader2().toLowerCase().contains("STEPS".toLowerCase())) {
 						
 					String startNode = getDiagramNode(startN).getId();
 					String endNode = getDiagramNode(relationships.getEndNode()).getId();
-					relationshipLinkedSet.addtoSet(startNode, endNode);
+					relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
 					}
 					else if(relationships.getInRoleHeader2().toLowerCase().contains("INITIAL STEP".toLowerCase()) &&
 							relationships.getInRoleHeader1().toLowerCase().contains("STEPS".toLowerCase())) {
 						
 						String endNode = getDiagramNode(startN).getId();
 						String startNode = getDiagramNode(relationships.getEndNode()).getId();
-						relationshipLinkedSet.addtoSet(startNode, endNode);
+						relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
 					}
-					else if (relationships.getInRoleHeader1().toLowerCase().contains("FROM".toLowerCase()) &&
+					//TECHNIQUE AND DATA DIAGRAM
+					if(relationships.getInRoleHeader1().toLowerCase().contains("FROM".toLowerCase()) &&
 							relationships.getInRoleHeader2().toLowerCase().contains("TO".toLowerCase())) {
-						String startNode = getDiagramNode(startN).getId();
-						//System.out.println("At cypher query builder-->" + relationships.getEndNode());
-						String endNode = relationships.getEndNode();
-						relationshipLinkedSet.addtoSet(startNode, endNode);
+						
+					String startNode = getDiagramNode(startN).getId();
+					String endNode = getDiagramNode(relationships.getEndNode()).getId();
+					relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
 					}
-					else if (relationships.getInRoleHeader1().toLowerCase().contains("TO".toLowerCase()) &&
-							relationships.getInRoleHeader2().toLowerCase().contains("FROM".toLowerCase())) {
+					else if(relationships.getInRoleHeader2().toLowerCase().contains("FROM".toLowerCase()) &&
+							relationships.getInRoleHeader1().toLowerCase().contains("TO".toLowerCase())) {
+						
 						String endNode = getDiagramNode(startN).getId();
-						String startNode = relationships.getEndNode();
-						relationshipLinkedSet.addtoSet(startNode, endNode);
+						String startNode = getDiagramNode(relationships.getEndNode()).getId();
+						relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
+					}
+					
+					//PROCESS DIAGRAM
+					if(relationships.getInRoleHeader1().toLowerCase().contains("CONDITION".toLowerCase()) &&
+							relationships.getInRoleHeader2().toLowerCase().contains("OPERATION".toLowerCase())) {
+						
+					String startNode = getDiagramNode(startN).getId();
+					String endNode = getDiagramNode(relationships.getEndNode()).getId();
+					relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
+					}
+					else if(relationships.getInRoleHeader2().toLowerCase().contains("CONDITION".toLowerCase()) &&
+							relationships.getInRoleHeader1().toLowerCase().contains("OPERATION".toLowerCase())) {
+						
+						String endNode = getDiagramNode(startN).getId();
+						String startNode = getDiagramNode(relationships.getEndNode()).getId();
+						relationshipLinkedSet.addtoSet(startNode, endNode, relationships.getInRelationship());
 					}
 				}
 			}

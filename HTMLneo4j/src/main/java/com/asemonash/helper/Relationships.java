@@ -7,16 +7,25 @@ public class Relationships {
 	private String endNodeData;
 	private String inRoleHeader2;
 	private String endNode;
+	private String inRelationship;
 	
 	
 	
 	public Relationships() {
 		super();
 	}
-	public Relationships(String startNode, String endNode) {
+	public Relationships(String startNode, String endNode, String inRelationship) {
 		super();
 		this.startNode = startNode;
 		this.endNode = endNode;
+		this.inRelationship = inRelationship;
+	}
+	
+	public String getInRelationship() {
+		return inRelationship;
+	}
+	public void setInRelationship(String inRelationship) {
+		this.inRelationship = inRelationship;
 	}
 	public String getStartNode() {
 		return startNode;
@@ -58,8 +67,9 @@ public class Relationships {
 	public String toString() {
 		return "Relationships [startNode=" + startNode + ", startNodeData=" + startNodeData + ", inRoleHeader1="
 				+ inRoleHeader1 + ", endNodeData=" + endNodeData + ", inRoleHeader2=" + inRoleHeader2 + ", endNode="
-				+ endNode + "]";
+				+ endNode + ", inRelationship=" + inRelationship + "]";
 	}
+	
 	
 	
 	

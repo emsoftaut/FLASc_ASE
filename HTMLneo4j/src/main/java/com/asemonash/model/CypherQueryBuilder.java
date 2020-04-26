@@ -26,9 +26,6 @@ public class CypherQueryBuilder<E> {
 	private List<DiagramNode> diagramNodesList;
 	private Set<String> matchedNodes;
 	private ArrayList<String> startNodeList;
-	//private List<Relationships> relationshipsList;
-	//private QueryStringBuilder queryStringBuilder;
-	//private List<>
 	
 	public CypherQueryBuilder(String cypherString) {
 		this.cypherString = cypherString;
@@ -44,14 +41,11 @@ public class CypherQueryBuilder<E> {
 
 	public void setCypherString(String cypherString) {
 		this.cypherString = cypherString;
-		//createCypherSyntax();
 	}
 
-	
 	public boolean createdNewCypherQuery() {
 		cypherString = "CREATE " + cypherString.substring(0, cypherString.length() - 1);
-		System.out.println("In model " + cypherString );
-		
+		System.out.println(cypherString);
 		if(!(databaseConnector.recordsExist())) {
 			System.out.println("NO RECORDS EXIST.... RUNNING INITIAL SCRIPT");
 			databaseConnector.runInitialCypherScript(cypherString);
@@ -64,57 +58,45 @@ public class CypherQueryBuilder<E> {
 		}
 	}
 	
-//	public void createGraphAnyway() {
-//		databaseConnector.runInitialCypherScript(cypherString);
-//	}
 	
 	public void createUpdatedCypherQuery(List<Relationships> relList, List<DiagramNode> diagramNodesList) {
-		//System.out.println("Hello");
-		//System.out.println(relList.size() +"-->"+ fetchedRecordsList.size());
 		String matchString = "MATCH";
 		
 		this.diagramNodesList = diagramNodesList;
 		String updatedCypherString = "";
-		//if(relList.size() >= fetchedRecordsList.size()) {
-			System.out.println("More records in relList");
-			for(Relationships relationships : relList) {
-				for(FetchedRecords fetchedRecords: fetchedRecordsList) {
-					
-					//System.out.println(relationships.getStartNode() +"-->"+ fetchedRecords.getId());
-					if(relationships.getStartNode().equalsIgnoreCase(fetchedRecords.getId()) || 
-							relationships.getEndNode().equalsIgnoreCase(fetchedRecords.getId())) {
-						matchedNodes.add(fetchedRecords.getId());
-					}
+		System.out.println("More records in relList");
+		for(Relationships relationships : relList) {
+			for(FetchedRecords fetchedRecords: fetchedRecordsList) {
+				if(relationships.getStartNode().equalsIgnoreCase(fetchedRecords.getId()) || 
+					relationships.getEndNode().equalsIgnoreCase(fetchedRecords.getId())) {
+					matchedNodes.add(fetchedRecords.getId());
 				}
 			}
-		//}
+		}
 			
+		for(String nodeID: matchedNodes) {
+			matchString += " (" + getDiagramNode(nodeID).getAlias() + "{id :" +"\""+ getDiagramNode(nodeID).getId() +"\""+ "}),";
+		}
 			
-			for(String nodeID: matchedNodes) {
-				//System.out.println("Diagram nodes are-->" + " (" + getDiagramNode(nodeID).getAlias() + "{id :" +"\""+ getDiagramNode(nodeID).getId() +"\""+ "}),");
-				matchString += " (" + getDiagramNode(nodeID).getAlias() + "{id :" +"\""+ getDiagramNode(nodeID).getId() +"\""+ "}),";
-			}
+		matchString = matchString.substring(0, matchString.length()-1);
 			
-			 matchString = matchString.substring(0, matchString.length()-1);
-			
-			for(Relationships relationships: relList) {
-				updatedCypherString += createUpdatedCypherQuery(relationships.getStartNode(), relationships.getEndNode());
-			}
+		for(Relationships relationships: relList) {
+			updatedCypherString += createUpdatedCypherQuery(relationships, relationships.getStartNode(), relationships.getEndNode());
+		}
 	
-			//System.out.println("Updated string-->" + matchString +" CREATE "+ updatedCypherString.substring(0, updatedCypherString.length() - 1));
-			databaseConnector.runInitialCypherScript(matchString +" CREATE "+ updatedCypherString.substring(0, updatedCypherString.length() - 1));
+		databaseConnector.runInitialCypherScript(matchString +" CREATE "+ updatedCypherString.substring(0, updatedCypherString.length() - 1));
 	}
 	
 	
-	private String createUpdatedCypherQuery(String start, String end) {
+	private String createUpdatedCypherQuery(Relationships r, String start, String end) {
 		String cString = "", startStr, endStr = "";
 		DiagramNode startNode = getDiagramNode(start);
 		DiagramNode endNode = getDiagramNode(end);
 		
 		
-		if(startNode.getLabel()==Label.TASK) {
-			endNode.setLabel(Label.SUB_TASK);
-		}
+//		if(startNode.getLabel()==Label.TASK) {
+//			endNode.setLabel(Label.SUB_TASK);
+//		}
 	
 		if(!(startNodeList.contains(startNode.getAlias()))) {
 			
@@ -135,7 +117,6 @@ public class CypherQueryBuilder<E> {
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
 			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
-			//edgeCounter++;
 		}
 		else {
 			
@@ -146,7 +127,19 @@ public class CypherQueryBuilder<E> {
 			endStr = "(" + endNode.getAlias() + ")";
 		}
 		
-		if(startNode.getLabel() == Label.DAP) {
+		
+		if(r.getInRelationship().equalsIgnoreCase(": Condition Correct") || 
+				r.getInRelationship().equalsIgnoreCase(": Condition inCorrect") ) {
+			if(r.getInRelationship().equalsIgnoreCase(": Condition Correct")) {
+				cString = startStr + "-[:YES]->"+ endStr + ",";
+			}
+			else if (r.getInRelationship().equalsIgnoreCase(": Condition inCorrect")) {
+				cString = startStr + "-[:NO]->"+ endStr + ",";
+			}
+			
+			//System.out.println("The relationship is-->" + cString);
+		}
+		else if(startNode.getLabel() == Label.DAP) {
 			cString = startStr + "-[:RT]->" + endStr + ",";
 		}
 		else {
@@ -156,7 +149,7 @@ public class CypherQueryBuilder<E> {
 		startNodeList.add(startNode.getAlias());
 		startNodeList.add(endNode.getAlias());
 		return cString;
-}
+	}
 
 	@Override
 	public String toString() {
