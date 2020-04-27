@@ -9,9 +9,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.neo4j.driver.internal.shaded.io.netty.util.internal.SocketUtils;
+import org.w3c.dom.css.ElementCSSInlineStyle;
 
+import com.asemonash.controller.HtmlParser;
 import com.asemonash.controller.QueryStringBuilder;
 import com.asemonash.helper.DiagramNode;
+import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
@@ -45,9 +48,11 @@ public class CypherQueryBuilder<E> {
 
 	public boolean createdNewCypherQuery() {
 		cypherString = "CREATE " + cypherString.substring(0, cypherString.length() - 1);
-		System.out.println(cypherString);
+		
 		if(!(databaseConnector.recordsExist())) {
 			System.out.println("NO RECORDS EXIST.... RUNNING INITIAL SCRIPT");
+			//System.out.println("hello");
+			System.out.println("Initial query-->"+ cypherString);
 			databaseConnector.runInitialCypherScript(cypherString);
 			return true;
 		}
@@ -84,19 +89,34 @@ public class CypherQueryBuilder<E> {
 			updatedCypherString += createUpdatedCypherQuery(relationships, relationships.getStartNode(), relationships.getEndNode());
 		}
 	
-		databaseConnector.runInitialCypherScript(matchString +" CREATE "+ updatedCypherString.substring(0, updatedCypherString.length() - 1));
+		String updateQuery = matchString +" CREATE "+ updatedCypherString.substring(0, updatedCypherString.length() - 1);
+		System.out.println("Update query --> "+updateQuery);
+		databaseConnector.runInitialCypherScript(updateQuery);
 	}
 	
 	
 	private String createUpdatedCypherQuery(Relationships r, String start, String end) {
 		String cString = "", startStr, endStr = "";
+		//String startNodeLabel, endNodeLabel;
 		DiagramNode startNode = getDiagramNode(start);
 		DiagramNode endNode = getDiagramNode(end);
 		
 		
-//		if(startNode.getLabel()==Label.TASK) {
-//			endNode.setLabel(Label.SUB_TASK);
+//		startNodeLabel = startNode.getLabel().toString();
+//		endNodeLabel = endNode.getLabel().toString();
+//		
+		
+//		if(r.getInRelationship().equalsIgnoreCase(": Condition Correct") || 
+//				r.getInRelationship().equalsIgnoreCase(": Condition inCorrect") ) {
+//			isProcessDiagram = true;
+//			
 //		}
+		
+//		if (startNode.getLabel() == Label.TASK && endNode.getLabel()== Label.TASK && !DiagramType.diagramTypeProcess) {
+//			endNode.setLabel(Label.SUB_TASK);
+//			//cString = startStr + "-[:TS]->" + endStr + ",";
+//		}
+
 	
 		if(!(startNodeList.contains(startNode.getAlias()))) {
 			
@@ -142,9 +162,21 @@ public class CypherQueryBuilder<E> {
 		else if(startNode.getLabel() == Label.DAP) {
 			cString = startStr + "-[:RT]->" + endStr + ",";
 		}
-		else {
+		
+		else if (DiagramType.diagramTypeProcess) {
+			cString = startStr + "-[:PR]->" + endStr + ",";
+		}
+//		else if (startNode.getLabel() == Label.TASK && endNode.getLabel()== Label.TASK) {
+//			endNode.setLabel(Label.SUB_TASK);
+//			cString = startStr + "-[:TS]->" + endStr + ",";
+//		}
+		
+		
+		else  {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
+		
+		//System.out.println("is a process diagram "+ isProcessDiagram);
 		
 		startNodeList.add(startNode.getAlias());
 		startNodeList.add(endNode.getAlias());

@@ -13,6 +13,7 @@ import org.neo4j.driver.internal.shaded.io.netty.util.internal.shaded.org.jctool
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
 import com.asemonash.helper.DiagramNode;
+import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
@@ -94,6 +95,11 @@ public class QueryStringBuilder<E> {
 //			endNode.setLabel(Label.SUB_TASK);
 //		}
 //		
+		if (startNode.getLabel() == Label.TASK && endNode.getLabel()== Label.TASK && !DiagramType.diagramTypeProcess) {
+			endNode.setLabel(Label.SUB_TASK);
+			//cString = startStr + "-[:TS]->" + endStr + ",";
+		}
+		
 		
 		if(!(startNodeList.contains(startNode.getAlias()))) {
 			
@@ -129,6 +135,10 @@ public class QueryStringBuilder<E> {
 			cString = startStr + "-[:RT]->" + endStr + ",";
 			
 		}
+		else if (DiagramType.diagramTypeProcess) {
+			cString = startStr + "-[:PR]->" + endStr + ",";
+		}
+		
 		else {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}

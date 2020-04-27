@@ -16,6 +16,8 @@ import org.neo4j.driver.Session;
 import org.neo4j.driver.Transaction;
 import org.neo4j.driver.TransactionWork;
 
+import com.asemonash.helper.DiagramType;
+
 public class DatabaseConnector implements AutoCloseable {
 	
 	
@@ -33,6 +35,7 @@ public class DatabaseConnector implements AutoCloseable {
 
 	public void runInitialCypherScript(String cypherQuery) {
 		session.run(cypherQuery);
+		DiagramType.setDiagramType(false);
 	}
 	
 	public boolean recordsExist() {

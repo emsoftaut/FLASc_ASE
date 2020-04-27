@@ -21,6 +21,7 @@ import org.w3c.dom.css.ElementCSSInlineStyle;
 
 import com.asemonash.helper.DiagramEdge;
 import com.asemonash.helper.DiagramNode;
+import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.Relationships;
 
@@ -36,14 +37,14 @@ public class HtmlParser<E> {
 	private List<DiagramEdge<E>> diagramEdgesList;
 	private List<Relationships> relationshipsList;
 	private QueryStringBuilder queryBuilder;
-	private boolean isProcessDiagram = false;
+	public boolean isProcessDiagram = false;
 	//private static <> List<DiagramNode<E>> listDiagramNodes;
 	//private List<E> graphElementsList;
 	/**
 	 * afterCounter and beforeCounter are debug
 	 * statements. Remove in the final version
 	 */
-	private int afterCounter, beforeCounter = 0;
+	//private int afterCounter, beforeCounter = 0;
 	
 	public HtmlParser(File file) {
 		this.htmlFile = file;
@@ -81,7 +82,7 @@ public class HtmlParser<E> {
 					diagramEdgesList.add(diagramEdge);
 					//graphElementsList.add((E)diagramEdge);
 				}
-				beforeCounter++;
+				//beforeCounter++;
 			}
 			
 			createRelationships(document, diagramNodesList);
@@ -144,6 +145,7 @@ public class HtmlParser<E> {
 					//System.out.println(name);
 				}
 				isProcessDiagram = true;
+				DiagramType.setDiagramType(isProcessDiagram);
 				
 			}
 			
@@ -180,6 +182,7 @@ public class HtmlParser<E> {
 				}
 				
 				isProcessDiagram = true;
+				DiagramType.setDiagramType(isProcessDiagram);
 			}
 			
 			else if (isProcessDiagram == true && attribute.getKey().equalsIgnoreCase("alt") && 
@@ -291,7 +294,7 @@ public class HtmlParser<E> {
 			}
 		}
 		
-		afterCounter++;
+		//afterCounter++;
 	}
 	
 //	private void extractDataFrmAttr(Attributes attributes) {
@@ -516,11 +519,11 @@ public class HtmlParser<E> {
 	}
 	
 
-	private void rowCounterDebugFunc() {
-		System.out.println("Rows before filtering-->" + beforeCounter);
-		System.out.println("******************");
-		System.out.println("Rows after filtering-->"+ afterCounter);
-	}
+//	private void rowCounterDebugFunc() {
+//		System.out.println("Rows before filtering-->" + beforeCounter);
+//		System.out.println("******************");
+//		System.out.println("Rows after filtering-->"+ afterCounter);
+//	}
 	
 	
 	private void displayRelatiosnhips() {
