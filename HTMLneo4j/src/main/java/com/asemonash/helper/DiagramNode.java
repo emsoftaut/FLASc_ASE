@@ -6,6 +6,8 @@ public class DiagramNode<E> {
 	private Label label;
 	private E subLabel;
 	private String alias;
+	private String participant;
+	private String organization;
 	
 	public String getAlias() {
 		return alias;
@@ -38,10 +40,22 @@ public class DiagramNode<E> {
 	public void setSubLabel(E subLabel) {
 		this.subLabel = subLabel;
 	}
+	public String getParticipant() {
+		return participant;
+	}
+	public void setParticipant(String participant) {
+		this.participant = participant;
+	}
+	public String getOrganization() {
+		return organization;
+	}
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
 	@Override
 	public String toString() {
 		return "DiagramNode [id=" + id + ", name=" + name + ", label=" + label + ", subLabel=" + subLabel + ", alias="
-				+ alias + "]";
+				+ alias + ", participant=" + participant + ", organization=" + organization + "]";
 	}
 	
 	

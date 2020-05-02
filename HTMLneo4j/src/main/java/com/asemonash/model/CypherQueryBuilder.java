@@ -171,10 +171,25 @@ public class CypherQueryBuilder<E> {
 //			cString = startStr + "-[:TS]->" + endStr + ",";
 //		}
 		
+		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.SUB_TASK) {
+			cString = startStr + "-[:SS]->" + endStr + ",";
+		}
 		
-		else  {
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:TT]->" + endStr + ",";
+		}
+		
+		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:ST]->" + endStr + ",";
+		}
+		
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.SUB_TASK) {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
+		
+//		else  {
+//			cString = startStr + "-[:TS]->" + endStr + ",";
+//		}
 		
 		//System.out.println("is a process diagram "+ isProcessDiagram);
 		

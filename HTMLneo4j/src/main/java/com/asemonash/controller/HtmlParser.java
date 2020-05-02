@@ -16,6 +16,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Evaluator;
+import org.neo4j.driver.internal.shaded.io.netty.util.internal.SocketUtils;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
@@ -254,6 +255,7 @@ public class HtmlParser<E> {
 				String subValue = value.substring(0, value.indexOf(":"));
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
+				System.out.println("The value is-->" + subValue);
 				diagramNode.setAlias(subValue.replaceAll("[-/() ]", ""));
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {

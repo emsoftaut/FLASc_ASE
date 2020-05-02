@@ -95,10 +95,10 @@ public class QueryStringBuilder<E> {
 //			endNode.setLabel(Label.SUB_TASK);
 //		}
 //		
-		if (startNode.getLabel() == Label.TASK && endNode.getLabel()== Label.TASK && !DiagramType.diagramTypeProcess) {
-			endNode.setLabel(Label.SUB_TASK);
-			//cString = startStr + "-[:TS]->" + endStr + ",";
-		}
+//		if (startNode.getLabel() == Label.TASK && endNode.getLabel()== Label.TASK && !DiagramType.diagramTypeProcess) {
+//			endNode.setLabel(Label.SUB_TASK);
+//			//cString = startStr + "-[:TS]->" + endStr + ",";
+//		}
 		
 		
 		if(!(startNodeList.contains(startNode.getAlias()))) {
@@ -139,9 +139,25 @@ public class QueryStringBuilder<E> {
 			cString = startStr + "-[:PR]->" + endStr + ",";
 		}
 		
-		else {
+		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.SUB_TASK) {
+			cString = startStr + "-[:SS]->" + endStr + ",";
+		}
+		
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:TT]->" + endStr + ",";
+		}
+		
+		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:ST]->" + endStr + ",";
+		}
+		
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.SUB_TASK) {
 			cString = startStr + "-[:TS]->" + endStr + ",";
 		}
+		
+//		else {
+//			cString = startStr + "-[:TS]->" + endStr + ",";
+//		}
 		
 		startNodeList.add(startNode.getAlias());
 		startNodeList.add(endNode.getAlias());
