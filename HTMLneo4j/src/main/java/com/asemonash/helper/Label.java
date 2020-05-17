@@ -4,7 +4,7 @@ public enum Label {
 	CONDITION,
 	OPERATION,
 	TASK,
-	SUB_TASK,
+	OTHER,
 	INITIAL_STEP,
 	STEPS,
 	FROM,

@@ -1,4 +1,4 @@
-package com.asemonash.model;
+package com.asemonash.transform;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,13 +11,14 @@ import java.util.TreeSet;
 import org.neo4j.driver.internal.shaded.io.netty.util.internal.SocketUtils;
 import org.w3c.dom.css.ElementCSSInlineStyle;
 
-import com.asemonash.controller.HtmlParser;
-import com.asemonash.controller.QueryStringBuilder;
+import com.asemonash.extract.HtmlParser;
 import com.asemonash.helper.DiagramNode;
 import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
+import com.asemonash.load.DatabaseConnector;
+import com.asemonash.load.FetchedRecords;
 
 
 
@@ -122,7 +123,10 @@ public class CypherQueryBuilder<E> {
 			
 			startStr = "(" + startNode.getAlias()+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
 			",id:" + "\""+ startNode.getId() + "\"" +
-			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +"}"+")";
+			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +
+			",organization:" + "\""+ startNode.getOrganization() + "\"" +
+			",participant:" + "\""+ startNode.getParticipant() + "\"" +"}"+
+			")";
 		}
 		else {
 			startStr = "(" +startNode.getAlias()+ ")";
@@ -136,7 +140,10 @@ public class CypherQueryBuilder<E> {
 			
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
-			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
+			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +
+			",organization:" + "\""+ endNode.getOrganization() + "\"" +
+			",participant:" + "\""+ endNode.getParticipant() + "\"" +"}"+
+			")";
 		}
 		else {
 			
@@ -171,20 +178,20 @@ public class CypherQueryBuilder<E> {
 //			cString = startStr + "-[:TS]->" + endStr + ",";
 //		}
 		
-		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.SUB_TASK) {
-			cString = startStr + "-[:SS]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.OTHER && endNode.getLabel() == Label.OTHER) {
+			cString = startStr + "-[:OO]->" + endStr + ",";
 		}
 		
 		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.TASK) {
 			cString = startStr + "-[:TT]->" + endStr + ",";
 		}
 		
-		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.TASK) {
-			cString = startStr + "-[:ST]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.OTHER && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:OT]->" + endStr + ",";
 		}
 		
-		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.SUB_TASK) {
-			cString = startStr + "-[:TS]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.OTHER) {
+			cString = startStr + "-[:TO]->" + endStr + ",";
 		}
 		
 //		else  {

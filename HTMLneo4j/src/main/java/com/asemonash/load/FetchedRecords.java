@@ -1,4 +1,4 @@
-package com.asemonash.model;
+package com.asemonash.load;
 
 public class FetchedRecords {
 	private String name;

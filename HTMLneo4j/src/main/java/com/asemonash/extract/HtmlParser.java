@@ -1,4 +1,4 @@
-package com.asemonash.controller;
+package com.asemonash.extract;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import com.asemonash.helper.DiagramNode;
 import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.Relationships;
+import com.asemonash.transform.QueryStringBuilder;
 
 
 public class HtmlParser<E> {
@@ -255,13 +256,45 @@ public class HtmlParser<E> {
 				String subValue = value.substring(0, value.indexOf(":"));
 				diagramNode.setName((E)subValue);
 				//System.out.println(subValue);
-				System.out.println("The value is-->" + subValue);
+				System.out.println("The value is-->" + subValue +" ||is process "+ isProcessDiagram);
 				diagramNode.setAlias(subValue.replaceAll("[-/() ]", ""));
+				if(isProcessDiagram) {
+					//System.out.println("process diagram nodes-->" + subValue);
+					if(subValue.equalsIgnoreCase("Co-design of intervention") || 
+							subValue.equalsIgnoreCase("Pilot intervention") ||
+							subValue.equalsIgnoreCase("Finalising SMS intervention")) {
+						diagramNode.setOrganization("Investigator");
+						diagramNode.setParticipant("University of Melbourne/ Monash University/ PenCS/ Healthily/ Western Vic Primary Health Network/ Consumers \n");
+					}
+					else if(subValue.equalsIgnoreCase("Generate dataset of eligible patients") || 
+							subValue.equalsIgnoreCase("Sending SMS intervention to patients")) {
+						diagramNode.setOrganization("Hospital/Clinic");
+						diagramNode.setParticipant("General Practitioner");
+					}
+					else if(subValue.equalsIgnoreCase("Receive report from EMR") || 
+							subValue.equalsIgnoreCase("Receive SMS prior to receive NBCSP kit")) {
+						diagramNode.setOrganization("Users");
+						diagramNode.setParticipant("Patient");
+						
+					}
+					else if(subValue.equalsIgnoreCase("Remove outliers") || 
+							subValue.equalsIgnoreCase("Wrangle data") ||
+							subValue.equalsIgnoreCase("Acquire data") || 
+							subValue.equalsIgnoreCase("Impute missing value") ||
+							subValue.equalsIgnoreCase("Develop AI model") ) {
+						diagramNode.setOrganization("Technology Provider");
+						diagramNode.setParticipant("Data Scientists");
+					}
+					else if (subValue.equalsIgnoreCase("Deploy AI model in clinical software")) {
+						diagramNode.setOrganization("Technology Provider");
+						diagramNode.setParticipant("Software engineer");
+					}
+				}
 			}
 			else if(attribute.getKey().equalsIgnoreCase("alt")) {
 				
 				
-				diagramNode.setLabel(Label.SUB_TASK);
+				diagramNode.setLabel(Label.OTHER);
 				String value = attribute.getValue();
 				String subValue = value.substring(0, value.indexOf(":"));
 				String subLabel = value.substring(value.indexOf(":"), value.length());

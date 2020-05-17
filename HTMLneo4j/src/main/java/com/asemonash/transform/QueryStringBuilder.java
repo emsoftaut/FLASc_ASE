@@ -1,4 +1,4 @@
-package com.asemonash.controller;
+package com.asemonash.transform;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,7 +17,6 @@ import com.asemonash.helper.DiagramType;
 import com.asemonash.helper.Label;
 import com.asemonash.helper.RelationshipLinkedSet;
 import com.asemonash.helper.Relationships;
-import com.asemonash.model.CypherQueryBuilder;
 
 public class QueryStringBuilder<E> {
 	private List<Relationships> relationshipsList;
@@ -105,7 +104,10 @@ public class QueryStringBuilder<E> {
 			
 			startStr = "(" + startNode.getAlias()+":"+ startNode.getLabel() + "{name:" + "\""+ startNode.getName() + "\"" + 
 			",id:" + "\""+ startNode.getId() + "\"" +
-			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +"}"+")";
+			",sub_label:" + "\""+ startNode.getSubLabel() + "\"" +
+			",organization:" + "\""+ startNode.getOrganization() + "\"" +
+			",participant:" + "\""+ startNode.getParticipant() + "\"" +"}"+
+			")";
 		}
 		else {
 			startStr = "(" +startNode.getAlias()+ ")";
@@ -115,7 +117,10 @@ public class QueryStringBuilder<E> {
 			
 			endStr	= "(" + endNode.getAlias() +":"+ endNode.getLabel() + "{name:" + "\""+ endNode.getName() + "\"" + 
 			",id:" + "\""+ endNode.getId() + "\"" +
-			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +"}"+")";
+			",sub_label:" + "\""+ endNode.getSubLabel() + "\"" +
+			",organization:" + "\""+ endNode.getOrganization() + "\"" +
+			",participant:" + "\""+ endNode.getParticipant() + "\"" +"}"+
+			")";
 			//edgeCounter++;
 		}
 		else {
@@ -126,10 +131,14 @@ public class QueryStringBuilder<E> {
 		
 		if(r.getInRelationship().equalsIgnoreCase(": Condition Correct") || 
 				r.getInRelationship().equalsIgnoreCase(": Condition inCorrect") ) {
-			//System.out.println("The relationship is-->" + startNode.getName() + "##"+ r.getInRelationship() + "##" + endNode.getName());
-			cString = startStr + "-[:"+ r.getInRelationship().replaceAll("[: ]", "")  +"]->"+ endStr + ",";
-			System.out.println("The relationship is-->" + cString);
-			//System.out.println("Rel is-->" + getDiagramNode( r.getStartNode()) +"-"+r.getInRelationship()+"->"+ getDiagramNode( r.getEndNode()));
+			if(r.getInRelationship().equalsIgnoreCase(": Condition Correct")) {
+				cString = startStr + "-[:YES]->"+ endStr + ",";
+			}
+			else if (r.getInRelationship().equalsIgnoreCase(": Condition inCorrect")) {
+				cString = startStr + "-[:NO]->"+ endStr + ",";
+			}
+			
+			//System.out.println("The relationship is-->" + cString);
 		}
 		else if(startNode.getLabel() == Label.DAP) {
 			cString = startStr + "-[:RT]->" + endStr + ",";
@@ -139,20 +148,20 @@ public class QueryStringBuilder<E> {
 			cString = startStr + "-[:PR]->" + endStr + ",";
 		}
 		
-		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.SUB_TASK) {
-			cString = startStr + "-[:SS]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.OTHER && endNode.getLabel() == Label.OTHER) {
+			cString = startStr + "-[:OO]->" + endStr + ",";
 		}
 		
 		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.TASK) {
 			cString = startStr + "-[:TT]->" + endStr + ",";
 		}
 		
-		else if (startNode.getLabel() == Label.SUB_TASK && endNode.getLabel() == Label.TASK) {
-			cString = startStr + "-[:ST]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.OTHER && endNode.getLabel() == Label.TASK) {
+			cString = startStr + "-[:OT]->" + endStr + ",";
 		}
 		
-		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.SUB_TASK) {
-			cString = startStr + "-[:TS]->" + endStr + ",";
+		else if (startNode.getLabel() == Label.TASK && endNode.getLabel() == Label.OTHER) {
+			cString = startStr + "-[:TO]->" + endStr + ",";
 		}
 		
 //		else {

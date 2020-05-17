@@ -1,4 +1,4 @@
-package com.asemonash.model;
+package com.asemonash.load;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class DatabaseConnector implements AutoCloseable {
 	
 
 	public void runInitialCypherScript(String cypherQuery) {
-		session.run(cypherQuery);
+		//session.run(cypherQuery);
 		DiagramType.setDiagramType(false);
 	}
 	
