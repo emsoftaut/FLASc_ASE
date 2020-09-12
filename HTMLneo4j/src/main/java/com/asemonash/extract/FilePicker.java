@@ -26,7 +26,7 @@ public class FilePicker extends JPanel implements ActionListener {
 		super();
 		setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 		filePicker = new JButton("SELECT FILE");
-		fileChooser = new JFileChooser("C:\\Users\\em8149\\Desktop\\Monash Project\\Sample Data\\ASE-UseCase\\ASE-UseCase");
+		fileChooser = new JFileChooser("C:\\Users\\em8149\\Desktop\\ASE Big Data\\Monash Project\\Sample Data\\ASE-UseCase\\ASE-UseCase");
 		filePicker.addActionListener(this);
 		this.add(filePicker);
 	}
